@@ -4,3 +4,5 @@ main.dSYM
 *.o
 .DS_Store
 processor
+processor.dSYM
+junk
