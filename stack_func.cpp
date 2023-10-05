@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#include "main.h"
+#include "processor.h"
 
 
 int stack_ctor(stack * stk) {

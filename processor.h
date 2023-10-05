@@ -1,6 +1,6 @@
 #define canary 1
 #define dump_and_check 1
-#define hash 1
+#define hash 0
 
 #ifdef dump_and_check
 #define verify(stk) verificator_of_stack(&stk, __FILE__, __LINE__, __func__)
