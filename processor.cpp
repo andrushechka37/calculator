@@ -4,27 +4,25 @@
 #include "processor.h"
 int const multiple = 100;
 enum commands {
-    halt = -1,
-    add = 1,
-    sub = 2,
-    mul = 3,
-    div_c = 4,
-    push = 5,
-    sqrt_c = 6,
-    sin_c = 7,
-    cos_c = 8
+    halt    =   -1,
+    add     =    1,
+    sub     =    2,
+    mul     =    3,
+    div_c   =    4,
+    push    =    5,
+    sqrt_c  =    6,
+    sin_c   =    7,
+    cos_c   =    8,
+    in      =    9,
+    out     =   10
 };
 //////////// valueble pushed to stack is multilpied 100
 //out
-//sqrt
-// sin
-//cos
-// in
 void comander(FILE * pfile, stack * stk) {
     char command[5] = {0};
     char argument[100] = {0};
     int status = 0;
-    while (((status = fscanf(pfile, "%s %s", command, argument))) != EOF && (status != halt)) {
+    while (((status = fscanf(pfile, "%s %s", command, argument))) != EOF && (command != halt)) {
         if (status == 1 && (command[0] - '0') <= 4) {
             int x = 0;
             int y = 0;
@@ -47,7 +45,7 @@ void comander(FILE * pfile, stack * stk) {
             }
         } else {
             int x = 0;
-            if (command[0] - '0' != push) {
+            if (command[0] - '0' != push && command[0] - '0' != in){
                 stack_pop(stk, &x);
             }
             switch(command[0] - '0') {
@@ -56,7 +54,7 @@ void comander(FILE * pfile, stack * stk) {
                         x = x * 10 + (argument[i] - '0');
                     }
                     stack_push(stk, x * multiple);
-                    dump_stk(stk, " ", 1, " ");
+                    //dump_stk(stk, " ", 1, " ");
                     break;
                 case sqrt_c:
                     dump_stk(stk, " ", 1, " ");
@@ -68,7 +66,19 @@ void comander(FILE * pfile, stack * stk) {
                 case cos_c:
                     stack_push(stk, (int)(cos((double) (x/100)) * 100));
                     break;
-
+                case in:
+                    printf("type the number:\n");
+                    scanf("%s", argument);
+                    for(int i = 0; argument[i] != 0; i++) {
+                        x = x * 10 + (argument[i] - '0');
+                    }
+                    stack_push(stk, x * multiple);
+                    //dump_stk(stk, " ", 1, " ");
+                    break;
+                case out:
+                    printf("f");
+                    printf("%.2lf", (double) x / 100);
+                    break;
             }
         }
     }
@@ -87,7 +97,7 @@ int main(void) {
     dump_stk(&stk, " ", 1, " ");
     stack_pop(&stk, &x);
 
-    printf("%.2lf", (double) x / 100);
+    //printf("%.2lf", (double) x / 100);
     stack_dtor(&stk);
 }
 
@@ -107,37 +117,37 @@ int stack_ctor(stack * stk) {
 }
 
 int stack_push(stack * stk, elem_t value) {
-    verify(*stk);
+    //verify(*stk);
     if (stk->size + 2 >= stk->capacity) {
         printf("push call realloc\n");
         stack_extension(stk);
     }
     stk->data[stk->size++] = value;
-    stk->hash_data = calc_data(*stk);
-    stk->hash_stack = calc_stack(*stk);
-    verify(*stk);
+    // stk->hash_data = calc_data(*stk);
+    // stk->hash_stack = calc_stack(*stk);
+    //verify(*stk);
     return 0;
 }
 
 int stack_pop(stack * stk, elem_t * value) {
-    verify(*stk);
-    if (stk->size == 0 && dump_and_check == 1) {
-        printf("pop with zero size\n");
-        dump_stk(stk, __FILE__, __LINE__, __func__);
-        exit(-1);
-        return -1;
-    }
+    // verify(*stk);
+    // if (stk->size == 0 && dump_and_check == 1) {
+    //     printf("pop with zero size\n");
+    //     dump_stk(stk, __FILE__, __LINE__, __func__);
+    //     exit(-1);
+    //     return -1;
+    // }
 
     *value = stk->data[--stk->size];
     stk->data[stk->size] = -999;
-    stk->hash_data = calc_data(*stk);
-    stk->hash_stack = calc_stack(*stk);
+    // stk->hash_data = calc_data(*stk);
+    // stk->hash_stack = calc_stack(*stk);
     if (stk->size < (stk->capacity) / 2) {
         stack_compression(stk);
     }
-    stk->hash_data = calc_data(*stk);
-    stk->hash_stack = calc_stack(*stk);
-    verify(*stk);
+    // stk->hash_data = calc_data(*stk);
+    // stk->hash_stack = calc_stack(*stk);
+    // verify(*stk);
     return 0;
 }
 
