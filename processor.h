@@ -46,6 +46,23 @@ struct stack {
     unsigned long long  right_canary;
 };
 
+enum commands {
+    halt    =   -1,
+    add     =    1,
+    sub     =    2,
+    mul     =    3,
+    div_c   =    4,
+    Cmd_push    =    5,
+    sqrt_c  =    6,
+    sin_c   =    7,
+    cos_c   =    8,
+    in      =    9,
+    out     =   10,
+    pop_r   =   43,
+    push_r  =   33
+
+
+};
 int stack_ctor(stack * stk);
 
 int stack_push(stack * stk, elem_t value);

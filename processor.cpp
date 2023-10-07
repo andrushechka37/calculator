@@ -4,23 +4,20 @@
 #include "processor.h"
 
 int const multiple = 100;
+// struct with register values
+// pop rsx
+// comments
+// push rcx
+// opcode in bits
+// push rcx + 5
+// (optional) fscanf from file and work with array, in array counter ip
+//
 
-enum commands {
-    halt    =   -1,
-    add     =    1,
-    sub     =    2,
-    mul     =    3,
-    div_c   =    4,
-    push    =    5,
-    sqrt_c  =    6,
-    sin_c   =    7,
-    cos_c   =    8,
-    in      =    9,
-    out     =   10
+struct processor {
+    int number[5];
 };
 
 //////////// valueble pushed to stack is multilpied 100
-// out
 
 int str_to_int(char str[]) {
     int x = 0;
@@ -29,7 +26,7 @@ int str_to_int(char str[]) {
     }
     return x;
 }
-void comander(FILE * pfile, stack * stk) {
+void comander(FILE * pfile, stack * stk, processor * proc) {
     char command[5] = {0};
     char argument[100] = {0};
     int status = 0;
@@ -58,11 +55,12 @@ void comander(FILE * pfile, stack * stk) {
             }
         } else {
             int x = 0;
-            if (order != push && order != in){
+            int y = 0;   //auxiliary variables
+            if (order != Cmd_push && order != in && order != push_r){
                 stack_pop(stk, &x);
             }
             switch(order) {
-                case push:
+                case Cmd_push:
                 fscanf(pfile, "%s", argument);
                     x = str_to_int(argument);
                     stack_push(stk, x * multiple);
@@ -90,6 +88,14 @@ void comander(FILE * pfile, stack * stk) {
                 case out:
                     printf("%.2lf\n", (double) x / 100);
                     break;
+                case pop_r:
+                    fscanf(pfile, "%d", &y);
+                    proc->number[y] = x;
+                    break;
+                case push_r:
+                    fscanf(pfile, "%d", &x);
+                    stack_push(stk, proc->number[x]);
+                    break;
                 default:
                     printf("unknown commad rewrite");
                     return;
@@ -99,6 +105,7 @@ void comander(FILE * pfile, stack * stk) {
 }
 int main(void) {
     stack stk = {};
+    processor proc = {};
     FILE * pfile = fopen("asm.txt", "r");
     stack_ctor(&stk);
 
@@ -106,7 +113,7 @@ int main(void) {
     // stack_push(&stk, 1);
     // stack_push(&stk, 2);
     dump_stk(&stk, " ", 1, " ");
-    comander(pfile, &stk);
+    comander(pfile, &stk, &proc);
     int x = 0;
     //dump_stk(&stk, " ", 1, " ");
     stack_pop(&stk, &x);
