@@ -1,5 +1,5 @@
-#define canary 1
-#define dump_and_check 1
+#define canary 0
+#define dump_and_check 0
 #define hash 0
 
 #ifdef dump_and_check
@@ -23,7 +23,7 @@
 typedef int elem_t;
 typedef unsigned long long canary_t;
 
-const int start_capacity = 3;
+const int start_capacity = 6;
 const int realloc_const = 2;
 
 enum errors {
@@ -47,21 +47,18 @@ struct stack {
 };
 
 enum commands {
-    halt    =   -1,
-    add     =    1,
-    sub     =    2,
-    mul     =    3,
-    div_c   =    4,
-    Cmd_push    =    5,
-    sqrt_c  =    6,
-    sin_c   =    7,
-    cos_c   =    8,
-    in      =    9,
-    out     =   10,
-    pop_r   =   43,
-    push_r  =   33
-
-
+    Cmd_halt    =   -1,
+    Cmd_push    =    1,
+    Cmd_sub     =    2,
+    Cmd_mul     =    3,
+    Cmd_div     =    4,
+    Cmd_add     =    5,
+    Cmd_sqrt    =    6,
+    Cmd_sin     =    7,
+    Cmd_cos     =    8,
+    Cmd_in      =    9,
+    Cmd_out     =   10,
+    Cmd_pop     =   11
 };
 int stack_ctor(stack * stk);
 

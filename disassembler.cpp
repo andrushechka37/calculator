@@ -4,17 +4,17 @@
 
 
 enum commands {
-    halt    =   -1,
-    add     =    1,
-    sub     =    2,
-    mul     =    3,
-    div_c   =    4,
+    Cmd_halt    =   -1,
+    Cmd_add     =    1,
+    Cmd_sub     =    2,
+    Cmd_mul     =    3,
+    Cmd_div   =    4,
     push    =    5,
-    sqrt_c  =    6,
-    sin_c   =    7,
-    cos_c   =    8,
-    in      =    9,
-    out     =   10
+    Cmd_sqrt  =    6,
+    Cmd_sin   =    7,
+    Cmd_cos   =    8,
+    Cmd_in      =    9,
+    Cmd_out     =   10
 };
 
 int main(void) {
@@ -23,19 +23,19 @@ int main(void) {
     int x = 0;
     while (fscanf(pasm, "%d", &x) != EOF) {
         switch(x) {
-            case halt:
-                fprintf(input, "%s", "halt\n");
+            case Cmd_halt:
+                fprintf(input, "%s", "Cmd_halt\n");
                 break;
-            case add:
-                fprintf(input, "%s", "add\n");
+            case Cmd_add:
+                fprintf(input, "%s", "Cmd_add\n");
                 break;
-            case sub:
-                fprintf(input, "%s", "sub\n");
+            case Cmd_sub:
+                fprintf(input, "%s", "Cmd_sub\n");
                 break;
-            case mul:
-                fprintf(input, "%s", "mul\n");
+            case Cmd_mul:
+                fprintf(input, "%s", "Cmd_mul\n");
                 break;
-            case div_c:
+            case Cmd_div:
                 fprintf(input, "%s", "div\n");
                 break;
             case push:
@@ -43,19 +43,19 @@ int main(void) {
                 fscanf(pasm, "%d", &x);
                 fprintf(input, "%d\n", x);
                 break;
-            case sqrt_c:
+            case Cmd_sqrt:
                 fprintf(input, "%s", "sqrt\n");
                 break;
-            case sin_c:
+            case Cmd_sin:
                 fprintf(input, "%s", "sin\n");
                 break;
-            case cos_c:
+            case Cmd_cos:
                 fprintf(input, "%s", "cos\n");
                 break;
-            case in:
-                fprintf(input, "%s", "in\n");
+            case Cmd_in:
+                fprintf(input, "%s", "Cmd_in\n");
                 break;
-            case out:
+            case Cmd_out:
                 fprintf(input, "%s", "out\n");
                 break;
             default:

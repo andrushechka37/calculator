@@ -4,20 +4,39 @@
 #include "processor.h"
 
 int const multiple = 100;
-// struct with register values
-// pop rsx
+int const poison_value = -999;
 // comments
-// push rcx
-// opcode in bits
-// push rcx + 5
+// (optional) push rcx + 5
 // (optional) fscanf from file and work with array, in array counter ip
-//
+// command understand for pop and pop code generation
+// add stack in proc
 
 struct processor {
     int number[5];
 };
 
 //////////// valueble pushed to stack is multilpied 100
+int * command_understand_pop(int full_command, processor * proc, FILE * pfile, stack * stk) {
+    if((full_command & (1 << 5)) != 0) {
+        int reg_number = 0;
+        fscanf(pfile, " %d", &reg_number);
+        return &proc->number[reg_number];
+    }
+    return 0;
+}
+int command_understand(int full_command, processor * proc, FILE * pfile) {
+    if((full_command & (1 << 5)) != 0) {
+        int reg_num = 0;
+        fscanf(pfile, "%d", &reg_num);
+        return (proc->number[reg_num] / 100);
+    }
+    if ((full_command & (1 << 4)) != 0) {
+        int argument = 0;
+        fscanf(pfile, "%d", &argument);
+        return argument;
+    }
+    return poison_value;
+}
 
 int str_to_int(char str[]) {
     int x = 0;
@@ -29,75 +48,71 @@ int str_to_int(char str[]) {
 void comander(FILE * pfile, stack * stk, processor * proc) {
     char command[5] = {0};
     char argument[100] = {0};
-    int status = 0;
     while ((fscanf(pfile, "%s", command)) != EOF) {
+
         int order = str_to_int(command);
-        if ((order) <= 4) {
-            int x = 0;
-            int y = 0;
-            stack_pop(stk, &y);
-            stack_pop(stk, &x);
+        int full_command = order;
+        order &= (15);
+
+        if (full_command == -1) {
+            continue;
+        }
+
+        if ((order) <= 5 && order > 1) {
+            int first_arg = 0;
+            int sec_arg = 0;
+            stack_pop(stk, &sec_arg);
+            stack_pop(stk, &first_arg);
             switch(order) {
-                case add:
-                    stack_push(stk, (x+y));
+                case Cmd_add:
+                    stack_push(stk, (first_arg+sec_arg));
                     break;
-                case sub:
-                    stack_push(stk, (x-y));
+                case Cmd_sub:
+                    stack_push(stk, (first_arg-sec_arg));
                     break;
-                case mul:
-                    stack_push(stk, (x*y) / 100);
+                case Cmd_mul:
+                    stack_push(stk, (first_arg*sec_arg) / 100);
                     break;
-                case div_c:
-                    stack_push(stk, ((100*x) / y));
+                case Cmd_div:
+                    stack_push(stk, ((100*first_arg) / sec_arg));
                     break;
-                case halt:
-                    return;
             }
         } else {
-            int x = 0;
-            int y = 0;   //auxiliary variables
-            if (order != Cmd_push && order != in && order != push_r){
-                stack_pop(stk, &x);
-            }
+            int argument = 0;
+            int reg_number = 0;
             switch(order) {
                 case Cmd_push:
-                fscanf(pfile, "%s", argument);
-                    x = str_to_int(argument);
-                    stack_push(stk, x * multiple);
+                    stack_push(stk, command_understand(full_command, proc, pfile) * multiple);
                     dump_stk(stk, " ", 1, " ");
                     break;
-                case sqrt_c:
+                case Cmd_sqrt:
+                    stack_pop(stk, &argument);
                     dump_stk(stk, " ", 1, " ");
-                    stack_push(stk, (int)(sqrt((double) (x/100)) * 100));
+                    stack_push(stk, (int)(sqrt((double) (argument/100)) * 100));
                     break;
-                case sin_c:
-                    stack_push(stk, (int)(sin((double) (x/100)) * 100));
+                case Cmd_sin:
+                    stack_pop(stk, &argument);
+                    stack_push(stk, (int)(sin((double) (argument/100)) * 100));
                     break;
-                case cos_c:
-                    stack_push(stk, (int)(cos((double) (x/100)) * 100));
+                case Cmd_cos:
+                    stack_pop(stk, &argument);
+                    stack_push(stk, (int)(cos((double) (argument/100)) * 100));
                     break;
-                case in:
+                case Cmd_in:
                     printf("type the number:\n");
-                    scanf("%s", argument);
-                    for(int i = 0; argument[i] != 0; i++) {
-                        x = x * 10 + (argument[i] - '0');
-                    }
-                    stack_push(stk, x * multiple);
+                    scanf("%d", &argument);
+                    stack_push(stk, argument * multiple);
                     dump_stk(stk, " ", 1, " ");
                     break;
-                case out:
-                    printf("%.2lf\n", (double) x / 100);
+                case Cmd_out:
+                    stack_pop(stk, &argument);
+                    printf("%.2lf\n", (double) argument / 100);
                     break;
-                case pop_r:
-                    fscanf(pfile, "%d", &y);
-                    proc->number[y] = x;
-                    break;
-                case push_r:
-                    fscanf(pfile, "%d", &x);
-                    stack_push(stk, proc->number[x]);
+                case Cmd_pop:
+                    stack_pop(stk, command_understand_pop(full_command, proc, pfile, stk));
                     break;
                 default:
-                    printf("unknown commad rewrite");
+                    printf("unknown commad rewrite %s - command, %d - argument", command, argument);
                     return;
             }
         }

@@ -4,61 +4,66 @@
 #include <math.h>
 #include "processor.h"
 
-
-/// изменить константы на енам
-// для попа и пуша расчет команд
-// функция которая анализирует пуш и поп и ретернет то что нужно пушать или попать
-
 int main(void) {
     FILE * input = fopen("input.txt", "r");
     FILE * pasm = fopen("asm.txt", "wt");
     char str[100] = {0};
     while (fscanf(input, "%s", str) != EOF) {
         if (strcmp(str, "add") == 0) {
-            fprintf(pasm, "1\n");
+            fprintf(pasm, "%d\n", Cmd_add);
         } else if(strcmp(str, "sub") == 0) {
-            fprintf(pasm, "2\n");
+            fprintf(pasm, "%d\n", Cmd_sub);
         } else if(strcmp(str, "mul") == 0) {
-            fprintf(pasm, "3\n");
+            fprintf(pasm, "%d\n", Cmd_mul);
         } else if (strcmp(str, "div") == 0) {
-            fprintf(pasm, "4\n");
+            fprintf(pasm, "%d\n", Cmd_div);
         } else if(strcmp(str, "push") == 0) {
 
             int  argument = 0;
             char n_reg = 0;
             if (fscanf(input, "%d", &argument) == 1) {
 
-                fprintf(pasm, "%d %d\n", Cmd_push, argument);
+                fprintf(pasm, "%d %d\n", ((1 << 4) | Cmd_push), argument);
 
             } else {
 
-                int command = ((1 << 5) | 1); // 0010|0001
-                                              //   ^ register
-                fprintf(pasm, "%d ", command);
-                fscanf(input, " r%cx", &n_reg);  // check x
-                fprintf(pasm, "%d \n", n_reg - 'a' + 1);
+                char x_check = 0;  //   ^ register
+                fprintf(pasm, "%d ", ((1 << 5) | Cmd_push));
+                fscanf(input, " r%c%c", &n_reg, &x_check);
+                if (x_check == 'x') {
+                    fprintf(pasm, "%d \n", n_reg - 'a' + 1);
+                } else {
+                    fprintf(pasm, "unknown command");
+                }
             }
 
         } else if (strcmp(str, "sqrt") == 0) {
-            fprintf(pasm, "6\n");
+            fprintf(pasm, "%d\n", Cmd_sqrt);
         } else if (strcmp(str, "sin") == 0) {
-            fprintf(pasm, "7\n");
+            fprintf(pasm, "%d\n", Cmd_sin);
         } else if (strcmp(str, "cos") == 0) {
-            fprintf(pasm, "8\n");
+            fprintf(pasm, "%d\n", Cmd_cos);
         } else if (strcmp(str, "in") == 0) {
-            fprintf(pasm, "9\n");
+            fprintf(pasm, "%d\n", Cmd_in);
         } else if (strcmp(str, "out") == 0) {
-            fprintf(pasm, "10\n");
+            fprintf(pasm, "%d\n", Cmd_out);
         } else if (strcmp(str, "halt") == 0) {
-            fprintf(pasm, "-1\n");
+            fprintf(pasm, "%d\n", Cmd_halt);
         } else if (strcmp(str, "pop") == 0) {
             char n_reg = 0;
-            fprintf(pasm, "43 ");
-            fscanf(input, " r%cx", &n_reg);
-            fprintf(pasm, "%d \n", n_reg - 'a' + 1);
+            char x_check = 0;
+            fprintf(pasm, "%d ", ((1 << 5) | Cmd_pop));
+            fscanf(input, " r%c%c", &n_reg, &x_check);
+                if (x_check == 'x') {
+                    fprintf(pasm, "%d \n", n_reg - 'a' + 1);
+                } else {
+                    fprintf(pasm, "unknown command");
+                }
         } else {
             fprintf(pasm, "unknown func");
         }
 
     }
+    fclose(pasm);
+    fclose(input);
 }
