@@ -13,10 +13,11 @@ int const poison_value = -999;
 
 struct processor {
     int number[5];
+    stack stk;
 };
 
 //////////// valueble pushed to stack is multilpied 100
-int * command_understand_pop(int full_command, processor * proc, FILE * pfile, stack * stk) {
+int * command_understand_pop(int full_command, processor * proc, FILE * pfile) {
     if((full_command & (1 << 5)) != 0) {
         int reg_number = 0;
         fscanf(pfile, " %d", &reg_number);
@@ -45,7 +46,7 @@ int str_to_int(char str[]) {
     }
     return x;
 }
-void comander(FILE * pfile, stack * stk, processor * proc) {
+void comander(FILE * pfile, processor * proc) {
     char command[5] = {0};
     char argument[100] = {0};
     while ((fscanf(pfile, "%s", command)) != EOF) {
@@ -61,20 +62,20 @@ void comander(FILE * pfile, stack * stk, processor * proc) {
         if ((order) <= 5 && order > 1) {
             int first_arg = 0;
             int sec_arg = 0;
-            stack_pop(stk, &sec_arg);
-            stack_pop(stk, &first_arg);
+            stack_pop(&proc->stk, &sec_arg);
+            stack_pop(&proc->stk, &first_arg);
             switch(order) {
                 case Cmd_add:
-                    stack_push(stk, (first_arg+sec_arg));
+                    stack_push(&proc->stk, (first_arg+sec_arg));
                     break;
                 case Cmd_sub:
-                    stack_push(stk, (first_arg-sec_arg));
+                    stack_push(&proc->stk, (first_arg-sec_arg));
                     break;
                 case Cmd_mul:
-                    stack_push(stk, (first_arg*sec_arg) / 100);
+                    stack_push(&proc->stk, (first_arg*sec_arg) / 100);
                     break;
                 case Cmd_div:
-                    stack_push(stk, ((100*first_arg) / sec_arg));
+                    stack_push(&proc->stk, ((100*first_arg) / sec_arg));
                     break;
             }
         } else {
@@ -82,34 +83,34 @@ void comander(FILE * pfile, stack * stk, processor * proc) {
             int reg_number = 0;
             switch(order) {
                 case Cmd_push:
-                    stack_push(stk, command_understand(full_command, proc, pfile) * multiple);
-                    dump_stk(stk, " ", 1, " ");
+                    stack_push(&proc->stk, command_understand(full_command, proc, pfile) * multiple);
+                    dump_stk(&proc->stk, " ", 1, " ");
                     break;
                 case Cmd_sqrt:
-                    stack_pop(stk, &argument);
-                    dump_stk(stk, " ", 1, " ");
-                    stack_push(stk, (int)(sqrt((double) (argument/100)) * 100));
+                    stack_pop(&proc->stk, &argument);
+                    dump_stk(&proc->stk, " ", 1, " ");
+                    stack_push(&proc->stk, (int)(sqrt((double) (argument/100)) * 100));
                     break;
                 case Cmd_sin:
-                    stack_pop(stk, &argument);
-                    stack_push(stk, (int)(sin((double) (argument/100)) * 100));
+                    stack_pop(&proc->stk, &argument);
+                    stack_push(&proc->stk, (int)(sin((double) (argument/100)) * 100));
                     break;
                 case Cmd_cos:
-                    stack_pop(stk, &argument);
-                    stack_push(stk, (int)(cos((double) (argument/100)) * 100));
+                    stack_pop(&proc->stk, &argument);
+                    stack_push(&proc->stk, (int)(cos((double) (argument/100)) * 100));
                     break;
                 case Cmd_in:
                     printf("type the number:\n");
                     scanf("%d", &argument);
-                    stack_push(stk, argument * multiple);
-                    dump_stk(stk, " ", 1, " ");
+                    stack_push(&proc->stk, argument * multiple);
+                    dump_stk(&proc->stk, " ", 1, " ");
                     break;
                 case Cmd_out:
-                    stack_pop(stk, &argument);
+                    stack_pop(&proc->stk, &argument);
                     printf("%.2lf\n", (double) argument / 100);
                     break;
                 case Cmd_pop:
-                    stack_pop(stk, command_understand_pop(full_command, proc, pfile, stk));
+                    stack_pop(&proc->stk, command_understand_pop(full_command, proc, pfile));
                     break;
                 default:
                     printf("unknown commad rewrite %s - command, %d - argument", command, argument);
@@ -119,22 +120,21 @@ void comander(FILE * pfile, stack * stk, processor * proc) {
     }
 }
 int main(void) {
-    stack stk = {};
     processor proc = {};
     FILE * pfile = fopen("asm.txt", "r");
-    stack_ctor(&stk);
+    stack_ctor(&proc.stk);
 
 
     // stack_push(&stk, 1);
     // stack_push(&stk, 2);
-    dump_stk(&stk, " ", 1, " ");
-    comander(pfile, &stk, &proc);
+    dump_stk(&proc.stk, " ", 1, " ");
+    comander(pfile, &proc);
     int x = 0;
     //dump_stk(&stk, " ", 1, " ");
-    stack_pop(&stk, &x);
+    stack_pop(&proc.stk, &x);
 
     //printf("%.2lf", (double) x / 100);
-    stack_dtor(&stk);
+    stack_dtor(&proc.stk);
 }
 
 /////////////////////////////////////////////-----------------------------------------------------------------------------
