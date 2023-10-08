@@ -1,69 +1,33 @@
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 #include "processor.h"
 
-int const multiple = 100;
-int const poison_value = -999;
+
 // (optional) comments
 // (optional) push rcx + 5
-// (optional) fscanf from file and work with array, in array counter ip
 // naming fix
-
-struct processor {
-    int number[5];
-    stack stk;
-};
-
 //////////// valueble pushed to stack is multilpied 100
-int * command_understand_pop(int full_command, processor * proc, FILE * pfile) {
-    if((full_command & (1 << 5)) != 0) {
-        int reg_number = 0;
-        fscanf(pfile, " %d", &reg_number);
-        return &proc->number[reg_number];
-    }
-    return 0;
-}
-int command_understand(int full_command, processor * proc, FILE * pfile) {
-    if((full_command & (1 << 5)) != 0) {
-        int reg_num = 0;
-        fscanf(pfile, "%d", &reg_num);
-        return (proc->number[reg_num] / multiple);
-    }
-    if ((full_command & (1 << 4)) != 0) {
-        int argument = 0;
-        fscanf(pfile, "%d", &argument);
-        return argument;
-    }
-    return poison_value;
-}
 
-int str_to_int(char str[]) {
-    int x = 0;
-    for(int i = 0; str[i] != 0; i++) {
-        x = x * 10 + (str[i] - '0');
-    }
-    return x;
-}
+
 void comander(FILE * pfile, processor * proc) {
-    char command[5] = {0};
-    char argument[100] = {0};
-    while ((fscanf(pfile, "%s", command)) != EOF) {
-
-        int order = str_to_int(command);
-        int full_command = order;
-        order &= (15);
+    while ((proc->code_array[proc->ip]) != 0) {
+        int full_command = (proc->code_array[proc->ip++]);
+        int command = full_command & 15;
 
         if (full_command == -1) {
             continue;
         }
 
-        if ((order) <= 5 && order > 1) {
+        if ((command) <= 5 && command > 1) {
             int first_arg = 0;
             int sec_arg = 0;
             stack_pop(&proc->stk, &sec_arg);
             stack_pop(&proc->stk, &first_arg);
-            switch(order) {
+            switch(command) {
                 case Cmd_add:
                     stack_push(&proc->stk, (first_arg+sec_arg));
                     break;
@@ -80,7 +44,7 @@ void comander(FILE * pfile, processor * proc) {
         } else {
             int argument = 0;
             int reg_number = 0;
-            switch(order) {
+            switch(command) {
                 case Cmd_push:
                     stack_push(&proc->stk, command_understand(full_command, proc, pfile) * multiple);
                     dump_stk(&proc->stk, " ", 1, " ");
@@ -112,7 +76,7 @@ void comander(FILE * pfile, processor * proc) {
                     stack_pop(&proc->stk, command_understand_pop(full_command, proc, pfile));
                     break;
                 default:
-                    printf("unknown commad rewrite %s - command, %d - argument", command, argument);
+                    printf("unknown commad rewrite %d - command, %d - argument", command, argument);
                     return;
             }
         }
@@ -127,6 +91,7 @@ int main(void) {
     // stack_push(&stk, 1);
     // stack_push(&stk, 2);
     dump_stk(&proc.stk, " ", 1, " ");
+    code_array_gen(&proc, pfile);
     comander(pfile, &proc);
     int x = 0;
     //dump_stk(&stk, " ", 1, " ");
@@ -135,7 +100,61 @@ int main(void) {
     //printf("%.2lf", (double) x / 100);
     stack_dtor(&proc.stk);
 }
+////////////////////////---------------------------------------
+int command_understand(int full_command, processor * proc, FILE * pfile) {
+    if((full_command & (1 << 5)) != 0) {
+        int reg_num = (proc->code_array[proc->ip++]);
+        return (proc->number[reg_num] / multiple);
+    }
+    if ((full_command & (1 << 4)) != 0) {
+        int argument = (proc->code_array[proc->ip++]);
+        return argument;
+    }
+    return poison_value;
+}
 
+int * command_understand_pop(int full_command, processor * proc, FILE * pfile) {
+    if((full_command & (1 << 5)) != 0) {
+        int reg_number = (proc->code_array[proc->ip++]);
+        return &proc->number[reg_number];
+    }
+    return 0;
+}
+void code_array_gen(processor * proc, FILE * pfile) {
+    proc->ip = 0;
+    proc->code_array = (int *) calloc(get_size_of_file(pfile) * 3, 1);
+    char str[100] = {0};
+    int arg = 0;
+    while(fscanf(pfile, "%s", str) != EOF) {
+        arg = str_to_int(str);
+        proc->code_array[proc->ip++] = arg;
+    }
+    proc->ip = 0;
+    int i = 0;
+    while(proc->code_array[i] != 0) {
+        printf("%d\n", proc->code_array[i]);
+        i++;
+    }
+}
+
+int get_size_of_file(FILE * file) {
+    struct stat buff;
+    fstat(fileno(file), &buff);
+    return buff.st_size;
+}
+
+int str_to_int(char str[]) {
+    int x = 0;
+    int sign = 1;
+    for(int i = 0; str[i] != 0; i++) {
+        if(str[i] == '-') {
+            sign = -1;
+            continue;
+        }
+        x = x * 10 + (str[i] - '0');
+    }
+    return x * sign;
+}
 /////////////////////////////////////////////-----------------------------------------------------------------------------
 
 int stack_ctor(stack * stk) {
@@ -148,11 +167,12 @@ int stack_ctor(stack * stk) {
     *(canary_t *)(stk->data + (stk->capacity)) = 0xDEADBEEF;
     stk->hash_data = calc_data(*stk);
     stk->hash_stack = calc_stack(*stk);
+    stk->data = (elem_t*)&(((canary_t*)stk->data)[-1]);
     return 0;
 }
 
 int stack_push(stack * stk, elem_t value) {
-    //verify(*stk);
+    verify(*stk);
     if (stk->size + 2 >= stk->capacity) {
         printf("push call realloc\n");
         stack_extension(stk);
@@ -165,13 +185,13 @@ int stack_push(stack * stk, elem_t value) {
 }
 
 int stack_pop(stack * stk, elem_t * value) {
-    // verify(*stk);
-    // if (stk->size == 0 && dump_and_check == 1) {
-    //     printf("pop with zero size\n");
-    //     dump_stk(stk, __FILE__, __LINE__, __func__);
-    //     exit(-1);
-    //     return -1;
-    // }
+    verify(*stk);
+    if (stk->size == 0 && dump_and_check == 1) {
+        printf("pop with zero size\n");
+        dump_stk(stk, __FILE__, __LINE__, __func__);
+        exit(-1);
+        return -1;
+    }
 
     *value = stk->data[--stk->size];
     stk->data[stk->size] = -999;
@@ -182,12 +202,12 @@ int stack_pop(stack * stk, elem_t * value) {
     // }
     // stk->hash_data = calc_data(*stk);
     // stk->hash_stack = calc_stack(*stk);
-    // verify(*stk);
+    verify(*stk);
     return 0;
 }
 
 int stack_extension(stack * stk) {
-    //verify(*stk);
+    verify(*stk);
     stk->data = (elem_t*)&(((canary_t*)stk->data)[-1]);
     printf("adress of data was %p\n", stk->data);
     stk->data = (elem_t *) realloc(stk->data, sizeof(elem_t) * (stk->capacity * realloc_const) + 2 * sizeof(canary_t));
@@ -197,7 +217,7 @@ int stack_extension(stack * stk) {
     stk->capacity *= realloc_const;
     stk->hash_data = calc_data(*stk);
     stk->hash_stack = calc_stack(*stk);
-    //verify(*stk);
+    verify(*stk);
     return 0;
 }
 
@@ -241,22 +261,22 @@ int put_canary(stack * stk, char type) {
 
 int verificator_of_stack(stack * stk, const char *file, int line, const char * func) {
     bool error = 0;
-    if(stk->left_canary != 0xDEADBEEF) {
+    if(stk->left_canary != 0xDEADBEEF && canary == 1) {
         printf("left canary of struct died\n");
         error = 1;
     }
 
-    if(stk->right_canary != 0xDEADBEEF) {
+    if(stk->right_canary != 0xDEADBEEF && canary == 1) {
         printf("right canary of struct died\n");
         error = 1;
     }
 
-    if(((canary_t*)stk->data)[-1] != 0xDEADBEEF) {
+    if(((canary_t*)stk->data)[-1] != 0xDEADBEEF && canary == 1) {
         printf("left canary of array died\n");
         error = 1;
     }
 
-    if(*(canary_t *)(stk->data + stk->capacity) != 0xDEADBEEF) {
+    if(*(canary_t *)(stk->data + stk->capacity) != 0xDEADBEEF && canary == 1) {
         printf("right canary of array died\n");
         error = 1;
     }

@@ -1,19 +1,28 @@
+
 #define canary 0
 #define dump_and_check 0
 #define hash 0
 
-#ifdef dump_and_check
+#if dump_and_check
 #define verify(stk) verificator_of_stack(&stk, __FILE__, __LINE__, __func__)
+#else
+#define verify(stk) ;
 #endif
 
-#ifdef canary
+#if canary
 #define can(stk, t) put_canary(&stk, t)
+#else
+#define can(stk, t) ;
 #endif
 
-#ifdef hash
+#if hash
 #define check_hash(stk) hash_check(&stk)
 #define calc_data(stk) hash_counter_data(&stk)
 #define calc_stack(stk) hash_counter_stack(&stk)
+#else
+#define check_hash(stk) ;
+#define calc_data(stk) 0;
+#define calc_stack(stk) 0;
 #endif
 
 
@@ -76,3 +85,20 @@ int hash_counter_data(stack * stk);
 int hash_check(stack * stk);
 
 int stack_dtor(stack * stk);
+/////////-processor funcs-//////
+
+int const multiple = 100;
+int const poison_value = -999;
+
+struct processor {
+    int number[5];
+    stack stk;
+    int * code_array;
+    int ip;
+};
+
+int get_size_of_file(FILE * file);
+int str_to_int(char str[]);
+void code_array_gen(processor * proc, FILE * pfile);
+int * command_understand_pop(int full_command, processor * proc, FILE * pfile);
+int command_understand(int full_command, processor * proc, FILE * pfile);
