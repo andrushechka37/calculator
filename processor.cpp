@@ -5,11 +5,10 @@
 
 int const multiple = 100;
 int const poison_value = -999;
-// comments
+// (optional) comments
 // (optional) push rcx + 5
 // (optional) fscanf from file and work with array, in array counter ip
-// command understand for pop and pop code generation
-// add stack in proc
+// naming fix
 
 struct processor {
     int number[5];
@@ -29,7 +28,7 @@ int command_understand(int full_command, processor * proc, FILE * pfile) {
     if((full_command & (1 << 5)) != 0) {
         int reg_num = 0;
         fscanf(pfile, "%d", &reg_num);
-        return (proc->number[reg_num] / 100);
+        return (proc->number[reg_num] / multiple);
     }
     if ((full_command & (1 << 4)) != 0) {
         int argument = 0;
@@ -72,10 +71,10 @@ void comander(FILE * pfile, processor * proc) {
                     stack_push(&proc->stk, (first_arg-sec_arg));
                     break;
                 case Cmd_mul:
-                    stack_push(&proc->stk, (first_arg*sec_arg) / 100);
+                    stack_push(&proc->stk, (first_arg*sec_arg) / multiple);
                     break;
                 case Cmd_div:
-                    stack_push(&proc->stk, ((100*first_arg) / sec_arg));
+                    stack_push(&proc->stk, ((multiple*first_arg) / sec_arg));
                     break;
             }
         } else {
@@ -89,15 +88,15 @@ void comander(FILE * pfile, processor * proc) {
                 case Cmd_sqrt:
                     stack_pop(&proc->stk, &argument);
                     dump_stk(&proc->stk, " ", 1, " ");
-                    stack_push(&proc->stk, (int)(sqrt((double) (argument/100)) * 100));
+                    stack_push(&proc->stk, (int)(sqrt((double) (argument/multiple)) * multiple));
                     break;
                 case Cmd_sin:
                     stack_pop(&proc->stk, &argument);
-                    stack_push(&proc->stk, (int)(sin((double) (argument/100)) * 100));
+                    stack_push(&proc->stk, (int)(sin((double) (argument/multiple)) * multiple));
                     break;
                 case Cmd_cos:
                     stack_pop(&proc->stk, &argument);
-                    stack_push(&proc->stk, (int)(cos((double) (argument/100)) * 100));
+                    stack_push(&proc->stk, (int)(cos((double) (argument/multiple)) * multiple));
                     break;
                 case Cmd_in:
                     printf("type the number:\n");
@@ -107,7 +106,7 @@ void comander(FILE * pfile, processor * proc) {
                     break;
                 case Cmd_out:
                     stack_pop(&proc->stk, &argument);
-                    printf("%.2lf\n", (double) argument / 100);
+                    printf("%.2lf\n", (double) argument / multiple);
                     break;
                 case Cmd_pop:
                     stack_pop(&proc->stk, command_understand_pop(full_command, proc, pfile));
