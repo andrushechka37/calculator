@@ -13,7 +13,7 @@
 //////////// valueble pushed to stack is multilpied 100
 
 
-void comander(FILE * pfile, processor * proc) {
+void CPU(FILE * pfile, processor * proc) {
     while ((proc->code_array[proc->ip]) != 0) {
         int full_command = (proc->code_array[proc->ip++]);
         int command = full_command & 15;
@@ -92,7 +92,7 @@ int main(void) {
     // stack_push(&stk, 2);
     dump_stk(&proc.stk, " ", 1, " ");
     code_array_gen(&proc, pfile);
-    comander(pfile, &proc);
+    CPU(pfile, &proc);
     int x = 0;
     //dump_stk(&stk, " ", 1, " ");
     stack_pop(&proc.stk, &x);
@@ -122,7 +122,7 @@ int * command_understand_pop(int full_command, processor * proc, FILE * pfile) {
 }
 void code_array_gen(processor * proc, FILE * pfile) {
     proc->ip = 0;
-    proc->code_array = (int *) calloc(get_size_of_file(pfile) * 3, 1);
+    proc->code_array = (int *) calloc(get_size_of_file(pfile) * 4, 1);
     char str[100] = {0};
     int arg = 0;
     while(fscanf(pfile, "%s", str) != EOF) {

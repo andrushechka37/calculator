@@ -7,3 +7,7 @@ processor
 processor.dSYM
 junk
 assembler.dSYM
+asm.txt
+asm_bin.txt
+assembler
+check.txt
