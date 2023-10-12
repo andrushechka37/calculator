@@ -82,10 +82,25 @@ void CPU(FILE * pfile, processor * proc) {
         }
     }
 }
+int CPU_Ctor(FILE ** pfile) {
+    if(bin_input == 0) {
+        *pfile = fopen("asm.txt", "r");
+    } else if (bin_input == 1) {
+        *pfile = fopen("asm_bin.txt", "rb");
+    }
+    return 0;
+}
+
+int CPU_Dtor(FILE * pfile, processor * proc) {
+    fclose(pfile);
+    free(proc->code_array);
+    return 0;
+}
 int main(void) {
     processor proc = {};
-    FILE * pfile = fopen("asm.txt", "r");
     stack_ctor(&proc.stk);
+    FILE * pfile = 0;
+    CPU_Ctor(&pfile);
 
 
     // stack_push(&stk, 1);
@@ -98,9 +113,10 @@ int main(void) {
     stack_pop(&proc.stk, &x);
 
     //printf("%.2lf", (double) x / 100);
+    CPU_Dtor(pfile, &proc);
     stack_dtor(&proc.stk);
 }
-////////////////////////---------------------------------------
+////////////////////////-----------------------------------------------------------------------------------------------------
 int command_understand(int full_command, processor * proc, FILE * pfile) {
     if((full_command & (1 << 5)) != 0) {
         int reg_num = (proc->code_array[proc->ip++]);
@@ -121,8 +137,9 @@ int * command_understand_pop(int full_command, processor * proc, FILE * pfile) {
     return 0;
 }
 void code_array_gen(processor * proc, FILE * pfile) {
+    proc->code_array = (int *) calloc(get_size_of_file(pfile) * sizeof(int), 1);
+    if (bin_input == 0) {
     proc->ip = 0;
-    proc->code_array = (int *) calloc(get_size_of_file(pfile) * 4, 1);
     char str[100] = {0};
     int arg = 0;
     while(fscanf(pfile, "%s", str) != EOF) {
@@ -130,10 +147,13 @@ void code_array_gen(processor * proc, FILE * pfile) {
         proc->code_array[proc->ip++] = arg;
     }
     proc->ip = 0;
-    int i = 0;
-    while(proc->code_array[i] != 0) {
-        printf("%d\n", proc->code_array[i]);
-        i++;
+//     int i = 0;
+//     while(proc->code_array[i] != 0) {
+//         printf("%d\n", proc->code_array[i]);
+//         i++;
+//     }
+    } else {
+        fread(proc->code_array, sizeof(int), get_size_of_file(pfile) * sizeof(int), pfile);
     }
 }
 

@@ -6,7 +6,6 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
-
 int main(void) {
     processor proc = {};
     FILE * input = fopen("input.txt", "r");
@@ -96,10 +95,10 @@ int main(void) {
     fclose(input);
     FILE * pasm_bin = fopen("asm_bin.txt", "wb");
     fwrite(proc.code_array, sizeof(int), proc.ip - 1, pasm_bin);
-    while(proc.code_array[i] != 0) {
-        printf("%d\n", proc.code_array[i]);
-        i++;
-    }
+    // while(proc.code_array[i] != 0) {
+    //     printf("%d\n", proc.code_array[i]);
+    //     i++;
+    // }
 }
 
 

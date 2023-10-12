@@ -1,3 +1,4 @@
+#define bin_input 0
 
 #define canary 0
 #define dump_and_check 0
