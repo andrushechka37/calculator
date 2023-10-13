@@ -82,19 +82,17 @@ void CPU(FILE * pfile, processor * proc) {
         }
     }
 }
-int CPU_Ctor(FILE ** pfile) {
+void CPU_Ctor(FILE ** pfile) {
     if(bin_input == 0) {
         *pfile = fopen("asm.txt", "r");
     } else if (bin_input == 1) {
         *pfile = fopen("asm_bin.txt", "rb");
     }
-    return 0;
 }
 
-int CPU_Dtor(FILE * pfile, processor * proc) {
+void CPU_Dtor(FILE * pfile, processor * proc) {
     fclose(pfile);
     free(proc->code_array);
-    return 0;
 }
 int main(void) {
     processor proc = {};
