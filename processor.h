@@ -58,6 +58,7 @@ struct stack {
 enum commands {
     #define DEF_CMD(name, num, ...)            \
     Cmd_ ## name = num,                        \
+
     #include "commands.h"
     #undef DEF_CMD
 };

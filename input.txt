@@ -5,4 +5,4 @@ push rax
 add
 sqrt
 out
-halt
+hlt
