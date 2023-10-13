@@ -1,18 +1,11 @@
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-#include "processor.h"
-
-
-// (optional) comments
-// (optional) push rcx + 5
-// naming fix
-//////////// valueble pushed to stack is multilpied 100
-
-
+# 1 "processor.cpp"
+# 1 "<built-in>" 1
+# 1 "<built-in>" 3
+# 428 "<built-in>" 3
+# 1 "<command line>" 1
+# 1 "<built-in>" 2
+# 1 "processor.cpp" 2
+# 16 "processor.cpp"
 void SPU(FILE * pfile, processor * proc) {
     while ((proc->code_array[proc->ip]) != 0) {
         int full_command = (proc->code_array[proc->ip++]);
@@ -26,11 +19,26 @@ void SPU(FILE * pfile, processor * proc) {
         int first_arg = 0;
         int sec_arg = 0;
         switch(command) {
-            #define DEF_CMD(name, num, have_arg, code, ...)                      \
-            case Cmd_ ## name: {code} break;                                     \
 
-            #include "commands.h"
-            #undef DEF_CMD
+
+
+
+
+# 1 "./commands.h" 1
+case Cmd_push: {{stack_push(&proc->stk, command_understand(full_command, proc, pfile) * multiple); dump_stk(&proc->stk, " ", 1, " ");}} \ break;
+case Cmd_sub: {{stack_pop(&proc->stk, &sec_arg);stack_pop(&proc->stk, &first_arg);stack_push(&proc->stk, (first_arg-sec_arg));}} \ break;
+case Cmd_mul: {{stack_pop(&proc->stk, &sec_arg);stack_pop(&proc->stk, &first_arg);stack_push(&proc->stk, (first_arg*sec_arg) / multiple);}} \ break;
+case Cmd_div: {{stack_pop(&proc->stk, &sec_arg);stack_pop(&proc->stk, &first_arg);stack_push(&proc->stk, ((multiple*first_arg) / sec_arg));}} \ break;
+case Cmd_add: {{stack_pop(&proc->stk, &sec_arg);stack_pop(&proc->stk, &first_arg);stack_push(&proc->stk, (first_arg+sec_arg));}} \ break;
+case Cmd_sqrt: {{stack_pop(&proc->stk, &argument);dump_stk(&proc->stk, " ", 1, " ");stack_push(&proc->stk, (int)(sqrt((double) (argument/multiple)) * multiple));}} \ break;
+case Cmd_sin: {{stack_pop(&proc->stk, &argument);stack_push(&proc->stk, (int)(sin((double) (argument/multiple)) * multiple));}} \ break;
+case Cmd_cos: {{stack_pop(&proc->stk, &argument);stack_push(&proc->stk, (int)(cos((double) (argument/multiple)) * multiple));}} \ break;
+case Cmd_in: {{printf("type the number:\n");scanf("%d", &argument);stack_push(&proc->stk, argument * multiple);dump_stk(&proc->stk, " ", 1, " ");}} \ break;
+case Cmd_out: {{stack_pop(&proc->stk, &argument);printf("%.2lf\n", (double) argument / multiple);}} \ break;
+case Cmd_pop: {{stack_pop(&proc->stk, command_understand_pop(full_command, proc, pfile));}} \ break;
+case Cmd_hlt: {{return;}} \ break;
+# 35 "processor.cpp" 2
+
                 default:
                     printf("unknown commad rewrite %d - command, %d - argument", command, argument);
                     return;
@@ -57,19 +65,19 @@ int main(void) {
     CPU_Ctor(&pfile);
 
 
-    // stack_push(&stk, 1);
-    // stack_push(&stk, 2);
+
+
     dump_stk(&proc.stk, " ", 1, " ");
     code_array_gen(&proc, pfile);
     SPU(pfile, &proc);
     int x = 0;
-    //dump_stk(&stk, " ", 1, " ");
+
     stack_pop(&proc.stk, &x);
-    //printf("%.2lf", (double) x / 100);
+
     CPU_Dtor(pfile, &proc);
     stack_dtor(&proc.stk);
 }
-////////////////////////-----------------------------------------------------------------------------------------------------
+
 int command_understand(int full_command, processor * proc, FILE * pfile) {
     if((full_command & (1 << 5)) != 0) {
         int reg_num = (proc->code_array[proc->ip++]);
@@ -100,11 +108,11 @@ void code_array_gen(processor * proc, FILE * pfile) {
         proc->code_array[proc->ip++] = arg;
     }
     proc->ip = 0;
-//     int i = 0;
-//     while(proc->code_array[i] != 0) {
-//         printf("%d\n", proc->code_array[i]);
-//         i++;
-//     }
+
+
+
+
+
     } else {
         fread(proc->code_array, sizeof(int), get_size_of_file(pfile) * sizeof(int), pfile);
     }
@@ -128,7 +136,7 @@ int str_to_int(char str[]) {
     }
     return x * sign;
 }
-/////////////////////////////////////////////-----------------------------------------------------------------------------
+
 
 int stack_ctor(stack * stk) {
     stk->left_canary = 0xDEADBEEF;
@@ -151,9 +159,9 @@ int stack_push(stack * stk, elem_t value) {
         stack_extension(stk);
     }
     stk->data[stk->size++] = value;
-    // stk->hash_data = calc_data(*stk);
-    // stk->hash_stack = calc_stack(*stk);
-    //verify(*stk);
+
+
+
     return 0;
 }
 
@@ -161,20 +169,20 @@ int stack_pop(stack * stk, elem_t * value) {
     verify(*stk);
     if (stk->size == 0 && dump_and_check == 1) {
         printf("pop with zero size\n");
-        dump_stk(stk, __FILE__, __LINE__, __func__);
+        dump_stk(stk, "processor.cpp", 166, __func__);
         exit(-1);
         return -1;
     }
 
     *value = stk->data[--stk->size];
     stk->data[stk->size] = -999;
-    // stk->hash_data = calc_data(*stk);
-    // stk->hash_stack = calc_stack(*stk);
-    // if (stk->size < (stk->capacity) / 2) {
-    //     stack_compression(stk);
-    // }
-    // stk->hash_data = calc_data(*stk);
-    // stk->hash_stack = calc_stack(*stk);
+
+
+
+
+
+
+
     verify(*stk);
     return 0;
 }
@@ -214,7 +222,7 @@ int put_canary(stack * stk, char type) {
     }
 
     if (type == 'r') {
-        //*(canary_t *)(stk->data + (stk->capacity / 2) - 2) = 0;
+
         int fatnees_of_canary = sizeof(canary_t) / sizeof(elem_t);
         for (int i = 0; i < fatnees_of_canary; i++) {
             stk->data[stk->capacity + i] = 0;
@@ -253,10 +261,10 @@ int verificator_of_stack(stack * stk, const char *file, int line, const char * f
         printf("right canary of array died\n");
         error = 1;
     }
-    // if(check_hash(*stk) != 0) {
-    //     printf("wrong hash\n");
-    //     error = 1;
-    // }
+
+
+
+
 
     if(stk == NULL) {
         printf("stk_zero_pointer\n");
@@ -281,8 +289,8 @@ int verificator_of_stack(stack * stk, const char *file, int line, const char * f
         dump_stk(stk, file, line, func);
         exit(-1);
     }
-    //if(//it was called from pop)
-    //data 0
+
+
     return 0;
 }
 
