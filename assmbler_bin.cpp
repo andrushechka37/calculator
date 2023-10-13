@@ -68,8 +68,8 @@ int main(void) {
             fprintf(pasm, "%d\n", Cmd_out);
             proc.code_array[proc.ip++] = Cmd_out;
         } else if (strcmp(str, "halt") == 0) {
-            fprintf(pasm, "%d\n", Cmd_halt);
-            proc.code_array[proc.ip++] = Cmd_halt;
+            fprintf(pasm, "%d\n", CMD_hlt);
+            proc.code_array[proc.ip++] = CMD_hlt;
         } else if (strcmp(str, "pop") == 0) {
             char n_reg = 0;
             char x_check = 0;

@@ -55,20 +55,11 @@ struct stack {
 
     unsigned long long  right_canary;
 };
-
 enum commands {
-    Cmd_halt    =   -1,
-    Cmd_push    =    1,
-    Cmd_sub     =    2,
-    Cmd_mul     =    3,
-    Cmd_div     =    4,
-    Cmd_add     =    5,
-    Cmd_sqrt    =    6,
-    Cmd_sin     =    7,
-    Cmd_cos     =    8,
-    Cmd_in      =    9,
-    Cmd_out     =   10,
-    Cmd_pop     =   11
+    #define DEF_CMD(name, num, ...)            \
+    Cmd_ ## name = num,                        \
+    #include "commands.h"
+    #undef DEF_CMD
 };
 int stack_ctor(stack * stk);
 
@@ -103,3 +94,27 @@ int str_to_int(char str[]);
 void code_array_gen(processor * proc, FILE * pfile);
 int * command_understand_pop(int full_command, processor * proc, FILE * pfile);
 int command_understand(int full_command, processor * proc, FILE * pfile);
+
+
+
+
+
+
+
+
+
+
+
+
+    // CMD_hlt    =   -1,
+    // Cmd_push    =    1,
+    // Cmd_sub     =    2,
+    // Cmd_mul     =    3,
+    // Cmd_div     =    4,
+    // Cmd_add     =    5,
+    // Cmd_sqrt    =    6,
+    // Cmd_sin     =    7,
+    // Cmd_cos     =    8,
+    // Cmd_in      =    9,
+    // Cmd_out     =   10,
+    // Cmd_pop     =   11

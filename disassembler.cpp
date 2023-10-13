@@ -4,7 +4,7 @@
 
 
 enum commands {
-    Cmd_halt    =   -1,
+    CMD_hlt    =   -1,
     Cmd_add     =    1,
     Cmd_sub     =    2,
     Cmd_mul     =    3,
@@ -23,7 +23,7 @@ int main(void) {
     int x = 0;
     while (fscanf(pasm, "%d", &x) != EOF) {
         switch(x) {
-            case Cmd_halt:
+            case CMD_hlt:
                 fprintf(input, "%s", "Cmd_halt\n");
                 break;
             case Cmd_add:

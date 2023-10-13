@@ -49,7 +49,7 @@ int main(void) {
         } else if (strcmp(str, "out") == 0) {
             fprintf(pasm, "%d\n", Cmd_out);
         } else if (strcmp(str, "halt") == 0) {
-            fprintf(pasm, "%d\n", Cmd_halt);
+            fprintf(pasm, "%d\n", CMD_hlt);
         } else if (strcmp(str, "pop") == 0) {
             char n_reg = 0;
             char x_check = 0;
