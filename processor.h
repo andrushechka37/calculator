@@ -36,7 +36,7 @@ enum bin {
 typedef int elem_t;
 typedef unsigned long long canary_t;
 
-const int start_capacity = 6;
+const int start_capacity = 3;
 const int realloc_const = 2;
 
 enum errors {
@@ -87,7 +87,7 @@ int const multiple = 100;
 int const poison_value = -999;
 
 struct processor {
-    int number[5];
+    int registers[5];
     stack stk;
     int * code_array;
     int ip;

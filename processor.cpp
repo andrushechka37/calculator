@@ -59,7 +59,7 @@ int main(void) {
 
     // stack_push(&stk, 1);
     // stack_push(&stk, 2);
-    dump_stk(&proc.stk, " ", 1, " ");
+    //dump_stk(&proc.stk, " ", 1, " ");
     code_array_gen(&proc, pfile);
     SPU(pfile, &proc);
     int x = 0;
@@ -73,7 +73,7 @@ int main(void) {
 int command_understand(int full_command, processor * proc, FILE * pfile) {
     if((full_command & (1 << reg_bit)) != 0) {
         int reg_num = (proc->code_array[proc->ip++]);
-        return (proc->number[reg_num] / multiple);
+        return (proc->registers[reg_num] / multiple);
     }
     if ((full_command & (1 << const_bit)) != 0) {
         int argument = (proc->code_array[proc->ip++]);
@@ -85,7 +85,7 @@ int command_understand(int full_command, processor * proc, FILE * pfile) {
 int * command_understand_pop(int full_command, processor * proc, FILE * pfile) {
     if((full_command & (1 << reg_bit)) != 0) {
         int reg_number = (proc->code_array[proc->ip++]);
-        return &proc->number[reg_number];
+        return &proc->registers[reg_number];
     }
     return 0;
 }
@@ -142,7 +142,7 @@ int stack_ctor(stack * stk) {
     *(canary_t *)(stk->data + (stk->capacity)) = 0xDEADBEEF;
     stk->hash_data = calc_data(*stk);
     stk->hash_stack = calc_stack(*stk);
-    stk->data = (elem_t*)&(((canary_t*)stk->data)[-1]);
+    stk->data = (elem_t*)&(((canary_t*)stk->data)[1]);
     return 0;
 }
 
@@ -155,7 +155,7 @@ int stack_push(stack * stk, elem_t value) {
     stk->data[stk->size++] = value;
     // stk->hash_data = calc_data(*stk);
     // stk->hash_stack = calc_stack(*stk);
-    //verify(*stk);
+    // verify(*stk);
     return 0;
 }
 
