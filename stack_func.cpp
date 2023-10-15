@@ -25,9 +25,9 @@ int stack_push(stack * stk, elem_t value) {
         stack_extension(stk);
     }
     stk->data[stk->size++] = value;
-    stk->hash_data = calc_data(*stk);
-    stk->hash_stack = calc_stack(*stk);
-    verify(*stk);
+    // stk->hash_data = calc_data(*stk);
+    // stk->hash_stack = calc_stack(*stk);
+    //verify(*stk);
     return 0;
 }
 
@@ -42,13 +42,13 @@ int stack_pop(stack * stk, elem_t * value) {
 
     *value = stk->data[--stk->size];
     stk->data[stk->size] = -999;
-    stk->hash_data = calc_data(*stk);
-    stk->hash_stack = calc_stack(*stk);
-    if (stk->size < (stk->capacity) / 2) {
-        stack_compression(stk);
-    }
-    stk->hash_data = calc_data(*stk);
-    stk->hash_stack = calc_stack(*stk);
+    // stk->hash_data = calc_data(*stk);
+    // stk->hash_stack = calc_stack(*stk);
+    // if (stk->size < (stk->capacity) / 2) {
+    //     stack_compression(stk);
+    // }
+    // stk->hash_data = calc_data(*stk);
+    // stk->hash_stack = calc_stack(*stk);
     verify(*stk);
     return 0;
 }
@@ -108,29 +108,29 @@ int put_canary(stack * stk, char type) {
 
 int verificator_of_stack(stack * stk, const char *file, int line, const char * func) {
     bool error = 0;
-    if(stk->left_canary != 0xDEADBEEF) {
+    if(stk->left_canary != 0xDEADBEEF && canary == 1) {
         printf("left canary of struct died\n");
         error = 1;
     }
 
-    if(stk->right_canary != 0xDEADBEEF) {
+    if(stk->right_canary != 0xDEADBEEF && canary == 1) {
         printf("right canary of struct died\n");
         error = 1;
     }
 
-    if(((canary_t*)stk->data)[-1] != 0xDEADBEEF) {
+    if(((canary_t*)stk->data)[-1] != 0xDEADBEEF && canary == 1) {
         printf("left canary of array died\n");
         error = 1;
     }
 
-    if(*(canary_t *)(stk->data + stk->capacity) != 0xDEADBEEF) {
+    if(*(canary_t *)(stk->data + stk->capacity) != 0xDEADBEEF && canary == 1) {
         printf("right canary of array died\n");
         error = 1;
     }
-    if(check_hash(*stk) != 0) {
-        printf("wrong hash\n");
-        error = 1;
-    }
+    // if(check_hash(*stk) != 0) {
+    //     printf("wrong hash\n");
+    //     error = 1;
+    // }
 
     if(stk == NULL) {
         printf("stk_zero_pointer\n");

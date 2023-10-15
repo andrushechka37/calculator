@@ -11,12 +11,12 @@
 // (optional) push rcx + 5
 // naming fix
 //////////// valueble pushed to stack is multilpied 100
-
+//norm funs that decides what to do
 
 void SPU(FILE * pfile, processor * proc) {
     while ((proc->code_array[proc->ip]) != 0) {
         int full_command = (proc->code_array[proc->ip++]);
-        int command = full_command & 15;
+        int command = full_command & command_bit;
 
         if (full_command == -1) {
             continue;
@@ -71,11 +71,11 @@ int main(void) {
 }
 ////////////////////////-----------------------------------------------------------------------------------------------------
 int command_understand(int full_command, processor * proc, FILE * pfile) {
-    if((full_command & (1 << 5)) != 0) {
+    if((full_command & (1 << reg_bit)) != 0) {
         int reg_num = (proc->code_array[proc->ip++]);
         return (proc->number[reg_num] / multiple);
     }
-    if ((full_command & (1 << 4)) != 0) {
+    if ((full_command & (1 << const_bit)) != 0) {
         int argument = (proc->code_array[proc->ip++]);
         return argument;
     }
@@ -83,7 +83,7 @@ int command_understand(int full_command, processor * proc, FILE * pfile) {
 }
 
 int * command_understand_pop(int full_command, processor * proc, FILE * pfile) {
-    if((full_command & (1 << 5)) != 0) {
+    if((full_command & (1 << reg_bit)) != 0) {
         int reg_number = (proc->code_array[proc->ip++]);
         return &proc->number[reg_number];
     }
@@ -93,18 +93,18 @@ void code_array_gen(processor * proc, FILE * pfile) {
     proc->code_array = (int *) calloc(get_size_of_file(pfile) * sizeof(int), 1);
     if (bin_input == 0) {
     proc->ip = 0;
-    char str[100] = {0};
+    char str[100] = {0}; /////////////const
     int arg = 0;
     while(fscanf(pfile, "%s", str) != EOF) {
         arg = str_to_int(str);
         proc->code_array[proc->ip++] = arg;
     }
     proc->ip = 0;
-//     int i = 0;
-//     while(proc->code_array[i] != 0) {
-//         printf("%d\n", proc->code_array[i]);
-//         i++;
-//     }
+    int i = 0;
+    while(proc->code_array[i] != 0) {
+        printf("%d\n", proc->code_array[i]);
+        i++;
+    }
     } else {
         fread(proc->code_array, sizeof(int), get_size_of_file(pfile) * sizeof(int), pfile);
     }
@@ -128,8 +128,10 @@ int str_to_int(char str[]) {
     }
     return x * sign;
 }
-/////////////////////////////////////////////-----------------------------------------------------------------------------
 
+
+
+/////////////////////////////-----------------------------------------------------------------------------------------
 int stack_ctor(stack * stk) {
     stk->left_canary = 0xDEADBEEF;
     stk->right_canary = 0xDEADBEEF;
@@ -344,3 +346,5 @@ int stack_dtor(stack * stk) {
     free((elem_t *)&(((canary_t*)stk->data)[-1]));
     return 0;
 }
+
+

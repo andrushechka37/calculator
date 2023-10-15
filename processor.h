@@ -26,8 +26,11 @@
 #define calc_stack(stk) 0;
 #endif
 
-
-
+enum bin {
+    command_bit = 31,
+    const_bit = 5,
+    reg_bit = 6
+};
 
 
 typedef int elem_t;

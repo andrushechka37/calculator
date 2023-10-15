@@ -14,20 +14,20 @@ int main(void) {
     //proc->code_array[proc->ip++] = arg;
 
 
-
+    // func arg обработка 
     #define DEF_CMD(name, num, have_arg, ...)                        \
     if (strcmp(str, #name) == 0) {                                   \
         int arg = 0;                                                 \
         if (have_arg == 1) {                                         \
             if (fscanf(input, "%d", &arg) == 1) {                    \
-                fprintf(pasm, "%d %d\n", ((1 << 4) | num), arg);     \
-                proc.code_array[proc.ip++] = (1 << 4) | num;         \
+                fprintf(pasm, "%d %d\n", ((1 << const_bit) | num), arg);     \
+                proc.code_array[proc.ip++] = (1 << const_bit) | num;         \
                 proc.code_array[proc.ip++] = arg;                    \
             } else {                                                 \
                 char n_reg = 0;                                      \
                 char x_check = 0;                                    \
-                fprintf(pasm, "%d ", ((1 << 5) | num));              \
-                proc.code_array[proc.ip++] = (1 << 5) | num;         \
+                fprintf(pasm, "%d ", ((1 << reg_bit) | num));              \
+                proc.code_array[proc.ip++] = (1 << reg_bit) | num;         \
                 fscanf(input, " r%c%c", &n_reg, &x_check);           \
                 if (x_check == 'x') {                                \
                     fprintf(pasm, "%d \n", n_reg - 'a' + 1);         \
@@ -69,7 +69,7 @@ int get_size_of_file(FILE * file) {
     return buff.st_size;
 }
 
-int str_to_int(char str[]) {
+int str_to_int(char str[]) { /////////strtoi
     int x = 0;
     int sign = 1;
     for(int i = 0; str[i] != 0; i++) {
