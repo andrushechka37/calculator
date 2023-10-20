@@ -6,40 +6,35 @@
 #include <math.h>
 #include "processor.h"
 
-
-// (optional) comments
-// (optional) push rcx + 5
+// clean trash
+// header files
 // naming fix
 //////////// valueble pushed to stack is multilpied 100
 //norm funs that decides what to do
 // input and asm change names
 
-// TODO: SPU?
-void SPU(FILE * pfile, processor * proc) {
+void CPU(FILE * pfile, processor * proc) {
     while ((proc->code_array[proc->ip]) != 0) {
-        // TODO: better name?
-        int full_command = (proc->code_array[proc->ip++]);
-        // TODO: command_bit? But it's not a bit
-        int command = full_command & command_bit;
+        int command = (proc->code_array[proc->ip++]);
+        int operation = command & command_bits;
 
-        if (full_command == -1) {
+        if (command == -1) {
             continue;
         }
         int argument = 0;
         int reg_number = 0;
         int first_arg = 0;
         int sec_arg = 0;
-        switch(command) {
+        switch(operation) {
             #define DEF_CMD(name, num, have_arg, code, ...)                      \
             case Cmd_ ## name: {code} break;                                     \
 
             #include "commands.h"
             // TODO: By the way, you can include #undef in your commands.h file
             #undef DEF_CMD
-            // TODO: what is with indentation?
-                default:
-                    printf("unknown commad rewrite %d - command, %d - argument", command, argument);
-                    return;
+            default:
+                printf("unknown commad rewrite %d - operation, %d - argument", operation, argument);
+                return;
         }
     }
 }
@@ -63,35 +58,29 @@ int main(void) {
     CPU_Ctor(&pfile);
 
     dump_stk(&proc.stk, " ", 1, " ");
-    // stack_push(&stk, 1);
-    // stack_push(&stk, 2);
-    //dump_stk(&proc.stk, " ", 1, " ");
     code_array_gen(&proc, pfile);
     dump_stk(&proc.stk, " ", 1, " ");
-    SPU(pfile, &proc);
+    CPU(pfile, &proc);
     dump_stk(&proc.stk, " ", 1, " ");
     int x = 0;
-    //dump_stk(&stk, " ", 1, " ");
-    //stack_pop(&proc.stk, &x);
-    //printf("%.2lf", (double) x / 100);
     CPU_Dtor(pfile, &proc);
     stack_dtor(&proc.stk);
 }
 ////////////////////////-----------------------------------------------------------------------------------------------------
-int command_understand(int full_command, processor * proc, FILE * pfile) {
-    if((full_command & (1 << reg_bit)) != 0) {
+int command_understand(int command, processor * proc, FILE * pfile) {
+    if((command & (1 << reg_bit)) != 0) {
         int reg_num = (proc->code_array[proc->ip++]);
         return (proc->registers[reg_num] / multiple);
     }
-    if ((full_command & (1 << const_bit)) != 0) {
+    if ((command & (1 << const_bit)) != 0) {
         int argument = (proc->code_array[proc->ip++]);
         return argument;
     }
     return poison_value;
 }
 
-int * command_understand_pop(int full_command, processor * proc, FILE * pfile) {
-    if((full_command & (1 << reg_bit)) != 0) {
+int * command_understand_pop(int command, processor * proc, FILE * pfile) {
+    if((command & (1 << reg_bit)) != 0) {
         int reg_number = (proc->code_array[proc->ip++]);
         return &proc->registers[reg_number];
     }
