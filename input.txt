@@ -1,6 +1,7 @@
 push 5
 in
 pop rax
+:3
 push rax
 add
 sqrt

@@ -12,6 +12,7 @@
 // naming fix
 //////////// valueble pushed to stack is multilpied 100
 //norm funs that decides what to do
+// input and asm change names
 
 void SPU(FILE * pfile, processor * proc) {
     while ((proc->code_array[proc->ip]) != 0) {
@@ -52,16 +53,18 @@ void CPU_Dtor(FILE * pfile, processor * proc) {
 }
 int main(void) {
     processor proc = {};
-    stack_ctor(&proc.stk);
+    Stack_Ctor(&proc.stk);
     FILE * pfile = 0;
     CPU_Ctor(&pfile);
 
-
+dump_stk(&proc.stk, " ", 1, " ");
     // stack_push(&stk, 1);
     // stack_push(&stk, 2);
     //dump_stk(&proc.stk, " ", 1, " ");
     code_array_gen(&proc, pfile);
+    dump_stk(&proc.stk, " ", 1, " ");
     SPU(pfile, &proc);
+    dump_stk(&proc.stk, " ", 1, " ");
     int x = 0;
     //dump_stk(&stk, " ", 1, " ");
     stack_pop(&proc.stk, &x);
@@ -132,7 +135,7 @@ int str_to_int(char str[]) {
 
 
 /////////////////////////////-----------------------------------------------------------------------------------------
-int stack_ctor(stack * stk) {
+int Stack_Ctor(stack * stk) {
     stk->left_canary = 0xDEADBEEF;
     stk->right_canary = 0xDEADBEEF;
     stk->capacity = start_capacity;
@@ -142,7 +145,6 @@ int stack_ctor(stack * stk) {
     *(canary_t *)(stk->data + (stk->capacity)) = 0xDEADBEEF;
     stk->hash_data = calc_data(*stk);
     stk->hash_stack = calc_stack(*stk);
-    stk->data = (elem_t*)&(((canary_t*)stk->data)[1]);
     return 0;
 }
 

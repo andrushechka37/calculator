@@ -1,7 +1,7 @@
 #define bin_input 0
 
 #define canary 0
-#define dump_and_check 0
+#define dump_and_check 1
 #define hash 0
 
 #if dump_and_check
@@ -36,7 +36,7 @@ enum bin {
 typedef int elem_t;
 typedef unsigned long long canary_t;
 
-const int start_capacity = 3;
+const int start_capacity = 7;
 const int realloc_const = 2;
 
 enum errors {
@@ -65,7 +65,7 @@ enum commands {
     #include "commands.h"
     #undef DEF_CMD
 };
-int stack_ctor(stack * stk);
+int Stack_Ctor(stack * stk);
 
 int stack_push(stack * stk, elem_t value);
 int stack_pop(stack * stk, elem_t * value);
@@ -91,6 +91,7 @@ struct processor {
     stack stk;
     int * code_array;
     int ip;
+    int labels[10];
 };
 
 int get_size_of_file(FILE * file);

@@ -4,7 +4,7 @@
 #include "processor.h"
 
 
-int stack_ctor(stack * stk) {
+int Stack_Ctor(stack * stk) {
     stk->left_canary = 0xDEADBEEF;
     stk->right_canary = 0xDEADBEEF;
     stk->capacity = start_capacity;

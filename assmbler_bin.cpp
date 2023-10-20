@@ -15,30 +15,32 @@ int main(void) {
 
 
     // func arg обработка 
-    #define DEF_CMD(name, num, have_arg, ...)                        \
-    if (strcmp(str, #name) == 0) {                                   \
-        int arg = 0;                                                 \
-        if (have_arg == 1) {                                         \
-            if (fscanf(input, "%d", &arg) == 1) {                    \
-                fprintf(pasm, "%d %d\n", ((1 << const_bit) | num), arg);     \
-                proc.code_array[proc.ip++] = (1 << const_bit) | num;         \
-                proc.code_array[proc.ip++] = arg;                    \
-            } else {                                                 \
-                char n_reg = 0;                                      \
-                char x_check = 0;                                    \
-                fprintf(pasm, "%d ", ((1 << reg_bit) | num));              \
-                proc.code_array[proc.ip++] = (1 << reg_bit) | num;         \
-                fscanf(input, " r%c%c", &n_reg, &x_check);           \
-                if (x_check == 'x') {                                \
-                    fprintf(pasm, "%d \n", n_reg - 'a' + 1);         \
-                    proc.code_array[proc.ip++] = n_reg - 'a' + 1;    \
-                }                                                    \
-            }                                                        \
-        } else {                                                     \
-            fprintf(pasm, "%d\n", num);                              \
-            proc.code_array[proc.ip++] = num;                        \
-        }                                                            \
-    } else                                                           \
+    #define DEF_CMD(name, num, have_arg, ...)                                     \
+    if (strcmp(str, #name) == 0) {                                                \
+        int arg = 0;                                                              \
+        char n_reg = 0;                                                           \
+        char x_check = 0;                                                         \
+        if (have_arg == 1) {                                                      \
+            if (fscanf(input, "%d", &arg) == 1) {                                 \
+                fprintf(pasm, "%d %d\n", ((1 << const_bit) | num), arg);          \
+                proc.code_array[proc.ip++] = (1 << const_bit) | num;              \
+                proc.code_array[proc.ip++] = arg;                                 \
+            } else if (fscanf(input, " r%c%c", &n_reg, &x_check) == 2) {          \
+                fprintf(pasm, "%d ", ((1 << reg_bit) | num));                     \
+                proc.code_array[proc.ip++] = (1 << reg_bit) | num;                \
+                fscanf(input, " r%c%c", &n_reg, &x_check);                        \
+                if (x_check == 'x') {                                             \
+                    fprintf(pasm, "%d \n", n_reg - 'a' + 1);                      \
+                    proc.code_array[proc.ip++] = n_reg - 'a' + 1;                 \
+                } else {                                                          \
+                    printf("error");                                              \
+                }                                                                 \
+            }                                                                     \
+            } else {                                                              \
+            fprintf(pasm, "%d\n", num);                                           \
+            proc.code_array[proc.ip++] = num;                                     \
+        }                                                                         \
+    } else                                                                        \
 
 
 
@@ -48,7 +50,17 @@ int main(void) {
     while (fscanf(input, "%s", str) != EOF) {
         #include "commands.h"
         #undef DEF_CMD
-    /*else*/ {printf("Syntax error");}
+    /*else*/ if(str[0] == ':') {
+        proc.labels[str[1] - '0'] = proc.ip;
+        
+        } else if (str[4] == ':') {
+            fprintf(pasm, "%d %d\n", Cmd_jump, proc.labels[str[5] - '0']);
+        } else {
+        printf("Syntax error");
+        } 
+    }
+    for(int i = 0; i < 10; i++) {
+        printf("%d", proc.labels[i]);
     }
     //proc.ip = 0;
     int i = 0;
@@ -61,6 +73,7 @@ int main(void) {
     //     i++;
     // }
 }
+
 
 
 int get_size_of_file(FILE * file) {
@@ -82,7 +95,9 @@ int str_to_int(char str[]) { /////////strtoi
     return x * sign;
 }
 
-
+            // } else if(fscanf(input, "%c", &n_reg) == 1 && n_reg == ':') {         \
+            //     fprintf(pasm, " %c\n", n_reg);                                    \
+            // }                                                                     \
 
 
 
