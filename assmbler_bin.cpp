@@ -1,3 +1,58 @@
+// TODO: WHY ARE YOU COMMITING BINARIES?
+
+// THIS IS YOUR COMMIT HISTORY:
+
+// * commit a7ef952a4e051eea4db44c61a43f3929099e08df
+// | Author: andrushechka365 <142117922+andrushechka365@users.noreply.github.com>
+// | Date:   Fri Oct 20 22:22:12 2023 +0300
+// | 
+// |     jump // TODO: what is this name?
+// | 
+// * commit 185c612e0f1324de65113eea68ac06760f9e246f
+// | Author: andrushechka365 <142117922+andrushechka365@users.noreply.github.com>
+// | Date:   Fri Oct 20 03:26:17 2023 +0300
+// | 
+// |     labels  // TODO: what is this name?
+// | 
+// * commit cec5469f461ec365b1d4e8f8182bce8ecf34d3de
+// | Author: andrushechka365 <142117922+andrushechka365@users.noreply.github.com>
+// | Date:   Sun Oct 15 23:55:12 2023 +0300
+// | 
+// |     jump  // TODO: what is this name?
+// | 
+// * commit 0c4721d0e23e9fcab1abc08aa95b6400360c6c84
+// | Author: andrushechka365 <142117922+andrushechka365@users.noreply.github.com>
+// | Date:   Sun Oct 15 22:10:00 2023 +0300
+// | 
+// |     const // TODO: what is this name?
+// | 
+// * commit fc0273dcf82d3101070757c527f9b7bf17b57efc
+// | Author: andrushechka365 <142117922+andrushechka365@users.noreply.github.com>
+// | Date:   Sat Oct 14 01:47:26 2023 +0300
+// | 
+// |     full code gen on define // Good enough, I'll let this pass (BUT I AM BEING GENEROUS)
+// | 
+// * commit 74bfd2cc25dce684bf3626c0674bac670d933cf5
+// | Author: andrushechka365 <142117922+andrushechka365@users.noreply.github.com>
+// | Date:   Fri Oct 13 21:33:52 2023 +0300
+// | 
+// |     macro in assembler // WHAT
+// | 
+// * commit d992e4f321edfc75c12ff17a0ee0b8e6ecb0b5c9
+// | Author: andrushechka365 <142117922+andrushechka365@users.noreply.github.com>
+// | Date:   Fri Oct 13 20:23:15 2023 +0300
+// | 
+// |     macro in processor.h // IS
+// | 
+// * commit 33281e8f34454ecfbbb7bb4a681dc299b8c03f6f
+// | Author: andrushechka365 <142117922+andrushechka365@users.noreply.github.com>
+// | Date:   Fri Oct 13 19:50:21 2023 +0300
+// | 
+// |     before code gen // THIS
+
+// TODO: ARE COMMIT MESSAGES A JOKE FOR YOU?
+
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -7,6 +62,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
+// TODO: you can make it smaller, and ... just delete this and write it better
 #define DEF_CMD(name, num, have_arg, ...)                                     \
 if (strcmp(str, #name) == 0) {                                                \
     int arg = 0;                                                              \
@@ -48,7 +104,7 @@ if (strcmp(str, #name) == 0) {                                                \
 
 void assembler(processor * proc) {
     FILE * input = fopen("input.txt", "r");
-    FILE * pasm = fopen("asm.txt", "wt");/////////// costul 
+    FILE * pasm = fopen("asm.txt", "wt");/////////// costul // TODO: Agreed
     proc->code_array = (int *) calloc(get_size_of_file(input) * 4, 1);
     char str[100] = {0};
     while (fscanf(input, "%s", str) != EOF) {
@@ -57,6 +113,7 @@ void assembler(processor * proc) {
         #undef DEF_CMD
     /*else*/ if(str[0] == ':') {
         proc->labels[str[1] - '0'] = proc->ip;
+        // TODO: indentation?
         
         } else {
         printf("Syntax error");
@@ -68,7 +125,7 @@ void assembler(processor * proc) {
 }
 int main(void) {
     processor proc = {};
-    //int arg = str_to_int(str);
+    //int arg = str_to_int(str); // TODO: do not comment code
     //proc->code_array[proc->ip++] = arg;
 
     assembler(&proc);
@@ -90,6 +147,7 @@ int main(void) {
 
 
 
+// TODO: why don't you just include textlib.h-like thing from Onegin as a separate header?
 int get_size_of_file(FILE * file) {
     struct stat buff;
     fstat(fileno(file), &buff);
@@ -124,6 +182,42 @@ int str_to_int(char str[]) { /////////strtoi
 
 
 
+
+// TODO: WHAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT?
+
+// #%&&@&&####%&&&@&&%&&&&@&&&&%%####%%%%####%%##((((%%%%%%%%%%%%%%%%%#&&&&&&&&%%&%
+// &&@@&&%%%%#%##%##########&&&%%%#####%%%%%%%#((((////%%%%%%%%%%######&##%&%#####%
+// @@@@@&&&&%%%######((####(#&&#%#######&#%&&#(((((#(##%@@&%%%%%%#####%%##&#####%##
+// &@@@@&@@&%%%%#####(#######/(%&%%%%%##((*.     ,*((#(&%%%&%%%%%#%%##&%#%%%###%%#%
+// &@&&@&@@@(/(#&###%%%%#%#%(/*//#%##(*,.           , *&&%%%%%%%%%&&%%&&&%%%%%%%##%
+// &@&@@@%#(*(@&&@%##(((((#&/////*///*.     .****,,,*   #%&&&&&&&&&&&&@&&&&&&%&&&&%
+// %%#/*/////#@&&#%@&@@&&%////*//////,  . *((((((((((/,  #%&@&@@&%&&&&&&@@&%&&&&&&%
+// %#(%@%&&&&&@@@&#(&@&&&%&,(/(#(*///#.,,/((####(((#((/,.*%%%%@@@&&%&@@@&&&&&&&&&&%
+// &@@@@&&&@&&&&@@&&&&&&@%#&,//(&(((*#%*/((((###((##(((**%%&&%@&&&&@@@@@@&@@@@@&&&%
+// &&@@@@@&@&#@&&&&&&&&&&&##&##(%#//%%%,/(((((((((#(((//#%%&&&&&&&&&&&&&@@@@@@&&&&%
+// &@@@@@@@&&@@&&&&&&&&&&&%%%&%#%&((#%#.////(((#####(//#%%%%%#%&&&&&&&&&&&&@@&&&@&%
+// &@@@@@@@&@@@@&&&&&&@&&&&&&&@&#&#(##(,////(((((//(//(&%%%%##&&&&&&&&&@@@&@&&&&@&%
+// &@@@@@@@@@@@&&&&&&&&@&&&&&&&&@#.    /((///////////. /&%%%##@&&&&&@@@@@&&&@@@@@&%
+// &&&@@@@@@@@@@&&&&&&&&&&&&&&.     ...##(((((///////(/    .%%&&&&&&@@@@@&&&&@@&&&%
+// &@&@@@@@@@@@&&&&&&&&@&&@,    ...,.,,/%(#(#((((((/(((*..  . ,%&&&&@&@@&&&&&&&&&%%
+ // ../&@@@@@@@&&&&&@@&@(. . ,,/#(..,**(#(#####((((####/,,,,,,,,*&&&&&&&&&&&@@&&&%%
+   // .,,,#@@@@@@@@@@@#.   ,#,,/(#*,,**/(/(####/(####*/(*.... .,..*&@&&&&&&&&&&&&%&
+  // ,*.,*/(##((#((#(., .,*##(*/,/(**,*/  .   #*/, %, /(#,..   .*/,.#&&&&&&@&&&&&%%
+    // .,*/((#(((((..*/((,*(#(((*/(#/(,/(*%**#*/*#*&(*/%*...**,*#*,,/.@@@@@&&&&&&%%
+ // .,*.,*(%#&&&@&%,(*///*/*%#%#(#(#/*/(#(((***///(#(((////,,/((/**/,/,#@&&&&&&%%%%
+// ****,,*/#(#&&&@*/*(/////*(#%%(%#%(*,**,    .#####((((//*(./(/**#*/*/*#&&&&&&&%%&
+// //(*.,*(##%#&&&*///(#//((/(%###%#/..,*(%&%&&%/..*****//, ., */(#/#*//*#@@@&%%%%&
+
+// TODO: in case this ASCII art is not readable, follow this link
+// https://www.google.com/url?sa=i&url=https%3A%2F%2Fknowyourmeme.com%2Fmemes%2Fwat&psig=AOvVaw3ht41L-36NEwSBjqXbf-HU&ust=1697918732921000&source=images&cd=vfe&ved=0CBEQjRxqFwoTCKi3-6i2hYIDFQAAAAAdAAAAABAE
+// (also, cheers to all guys from future, where this link is long
+// dead, sorry, I couldn't have predicted that. Oh wait, I did. Still,
+// I'm to lazy to do anything about it, if you are really curious,
+// google "WAT MEME", probably in your era it's still available from
+// archives of the old internet).
+
+// P.S. It'd be funny if Google is dead in your time and you can't
+//      "google", good luck then.
 
 // if (strcmp(str, "add") == 0) {
 //             fprintf(pasm, "%d\n", Cmd_add);
