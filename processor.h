@@ -1,5 +1,13 @@
+// TODO: Why is stack here? It's called processor, I mean...
+
+
+// TODO: Why isn't this a const int?
 #define bin_input 0
 
+// TODO: If this is used for conditional compilation, than
+//       just use #ifdef and #ifndef and parametrize on 
+//       define's existance, not it's value, this way
+//       you don't need to mention it in any header file ever.
 #define canary 0
 #define dump_and_check 0
 #define hash 0
@@ -7,10 +15,11 @@
 #if dump_and_check
 #define verify(stk) verificator_of_stack(&stk, __FILE__, __LINE__, __func__)
 #else
+// TODO: using ";" for an empty stmt is a bad idea. Think why.
 #define verify(stk) ;
 #endif
 
-#if canary
+#if canary // TODO: can? Can not
 #define can(stk, t) put_canary(&stk, t)
 #else
 #define can(stk, t) ;
@@ -22,6 +31,7 @@
 #define calc_stack(stk) hash_counter_stack(&stk)
 #else
 #define check_hash(stk) ;
+// TODO: And now it's "0;", why?
 #define calc_data(stk) 0;
 #define calc_stack(stk) 0;
 #endif

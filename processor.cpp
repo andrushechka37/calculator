@@ -14,9 +14,12 @@
 //norm funs that decides what to do
 // input and asm change names
 
+// TODO: SPU?
 void SPU(FILE * pfile, processor * proc) {
     while ((proc->code_array[proc->ip]) != 0) {
+        // TODO: better name?
         int full_command = (proc->code_array[proc->ip++]);
+        // TODO: command_bit? But it's not a bit
         int command = full_command & command_bit;
 
         if (full_command == -1) {
@@ -31,7 +34,9 @@ void SPU(FILE * pfile, processor * proc) {
             case Cmd_ ## name: {code} break;                                     \
 
             #include "commands.h"
+            // TODO: By the way, you can include #undef in your commands.h file
             #undef DEF_CMD
+            // TODO: what is with indentation?
                 default:
                     printf("unknown commad rewrite %d - command, %d - argument", command, argument);
                     return;

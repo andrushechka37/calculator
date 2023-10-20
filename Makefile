@@ -1,3 +1,5 @@
+# TODO: pls, fix
+
 .Phony: start
 start: processor.o stack_func.o
 	clang++ processor.o stack_func.o -o main
