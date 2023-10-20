@@ -6,66 +6,80 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
-int main(void) {
-    processor proc = {};
+
+#define DEF_CMD(name, num, have_arg, ...)                                     \
+if (strcmp(str, #name) == 0) {                                                \
+    int arg = 0;                                                              \
+    char n_reg = 0;                                                           \
+    char x_check = 0;                                                         \
+    if (have_arg == 1) {                                                      \
+        if (fscanf(input, "%d", &arg) == 1) {                                 \
+            fprintf(pasm, "%d %d\n", ((1 << const_bit) | num), arg);          \
+            proc->code_array[proc->ip++] = (1 << const_bit) | num;            \
+            proc->code_array[proc->ip++] = arg;                               \
+        } else if (fscanf(input, " r%c%c", &n_reg, &x_check) == 2) {          \
+            fprintf(pasm, "%d ", ((1 << reg_bit) | num));                     \
+            proc->code_array[proc->ip++] = (1 << reg_bit) | num;              \
+            fscanf(input, " r%c%c", &n_reg, &x_check);                        \
+            if (x_check == 'x') {                                             \
+                fprintf(pasm, "%d \n", n_reg - 'a' + 1);                      \
+                proc->code_array[proc->ip++] = n_reg - 'a' + 1;               \
+            } else {                                                          \
+                printf("error");                                              \
+            }                                                                 \
+        } else if (fscanf(input, " :%c", (char *)&n_reg) == 1) {                      \
+            proc->code_array[proc->ip++] = num;                               \
+            fprintf(pasm, "%d", num);                                       \
+            if (proc->labels[n_reg - '0'] != 0) {                                   \
+                proc->code_array[proc->ip++] = proc->labels[n_reg - '0'];           \
+                fprintf(pasm, " %d\n", proc->labels[n_reg - '0']);                  \
+            } else {                                                          \
+                proc->code_array[proc->ip++] = -999;                          \
+                fprintf(pasm, " -999\n");                                     \
+            }                                                                 \
+        }                                                                     \
+        } else {                                                              \
+        fprintf(pasm, "%d\n", num);                                           \
+        proc->code_array[proc->ip++] = num;                                   \
+    }                                                                         \
+} else                                                                        \
+
+
+
+void assembler(processor * proc) {
     FILE * input = fopen("input.txt", "r");
-    FILE * pasm = fopen("asm.txt", "wt");
-    //int arg = str_to_int(str);
-    //proc->code_array[proc->ip++] = arg;
-
-
-    // func arg обработка 
-    #define DEF_CMD(name, num, have_arg, ...)                                     \
-    if (strcmp(str, #name) == 0) {                                                \
-        int arg = 0;                                                              \
-        char n_reg = 0;                                                           \
-        char x_check = 0;                                                         \
-        if (have_arg == 1) {                                                      \
-            if (fscanf(input, "%d", &arg) == 1) {                                 \
-                fprintf(pasm, "%d %d\n", ((1 << const_bit) | num), arg);          \
-                proc.code_array[proc.ip++] = (1 << const_bit) | num;              \
-                proc.code_array[proc.ip++] = arg;                                 \
-            } else if (fscanf(input, " r%c%c", &n_reg, &x_check) == 2) {          \
-                fprintf(pasm, "%d ", ((1 << reg_bit) | num));                     \
-                proc.code_array[proc.ip++] = (1 << reg_bit) | num;                \
-                fscanf(input, " r%c%c", &n_reg, &x_check);                        \
-                if (x_check == 'x') {                                             \
-                    fprintf(pasm, "%d \n", n_reg - 'a' + 1);                      \
-                    proc.code_array[proc.ip++] = n_reg - 'a' + 1;                 \
-                } else {                                                          \
-                    printf("error");                                              \
-                }                                                                 \
-            }                                                                     \
-            } else {                                                              \
-            fprintf(pasm, "%d\n", num);                                           \
-            proc.code_array[proc.ip++] = num;                                     \
-        }                                                                         \
-    } else                                                                        \
-
-
-
-
-    proc.code_array = (int *) calloc(get_size_of_file(input) * 4, 1);
+    FILE * pasm = fopen("asm.txt", "wt");/////////// costul 
+    proc->code_array = (int *) calloc(get_size_of_file(input) * 4, 1);
     char str[100] = {0};
     while (fscanf(input, "%s", str) != EOF) {
+        char * label_check = strchr(str, ':');
         #include "commands.h"
         #undef DEF_CMD
     /*else*/ if(str[0] == ':') {
-        proc.labels[str[1] - '0'] = proc.ip;
+        proc->labels[str[1] - '0'] = proc->ip;
         
-        } else if (str[4] == ':') {
-            fprintf(pasm, "%d %d\n", Cmd_jump, proc.labels[str[5] - '0']);
         } else {
         printf("Syntax error");
         } 
     }
+    fclose(pasm);
+    fclose(input);
+
+}
+int main(void) {
+    processor proc = {};
+    //int arg = str_to_int(str);
+    //proc->code_array[proc->ip++] = arg;
+
+    assembler(&proc);
+    proc.ip = 0;
+    assembler(&proc);
+
+    // func arg обработка //bad rewrite
     for(int i = 0; i < 10; i++) {
         printf("%d", proc.labels[i]);
     }
-    //proc.ip = 0;
-    int i = 0;
-    fclose(pasm);
-    fclose(input);
+
     FILE * pasm_bin = fopen("asm_bin.txt", "wb");
     fwrite(proc.code_array, sizeof(int), proc.ip - 1, pasm_bin);
     // while(proc.code_array[i] != 0) {
@@ -101,7 +115,12 @@ int str_to_int(char str[]) { /////////strtoi
 
 
 
-
+//  else if (label_check != 0) {
+//             if (proc->labels[*(label_check + 1) - '0'] != 0) {
+//                 proc->code_array[proc->ip++] = Cmd_jmp;
+//                 proc->code_array[proc->ip++] = proc->labels[*(label_check + 1) - '0'];
+//                 fprintf(pasm, "%d %d\n", Cmd_jmp, proc->labels[*(label_check + 1) - '0']);
+//             } 
 
 
 

@@ -1,7 +1,7 @@
 #define bin_input 0
 
 #define canary 0
-#define dump_and_check 1
+#define dump_and_check 0
 #define hash 0
 
 #if dump_and_check

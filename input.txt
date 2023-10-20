@@ -1,9 +1,24 @@
 push 5
 in
 pop rax
-:3
 push rax
 add
 sqrt
 out
+
+push 1
+pop rax
+
+:3
+push 5
+push rax
+jbe :4
+
+push 1
+push rax
+add
+pop rax
+jmp :3
+
+:4
 hlt

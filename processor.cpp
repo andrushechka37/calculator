@@ -57,7 +57,7 @@ int main(void) {
     FILE * pfile = 0;
     CPU_Ctor(&pfile);
 
-dump_stk(&proc.stk, " ", 1, " ");
+    dump_stk(&proc.stk, " ", 1, " ");
     // stack_push(&stk, 1);
     // stack_push(&stk, 2);
     //dump_stk(&proc.stk, " ", 1, " ");
@@ -67,7 +67,7 @@ dump_stk(&proc.stk, " ", 1, " ");
     dump_stk(&proc.stk, " ", 1, " ");
     int x = 0;
     //dump_stk(&stk, " ", 1, " ");
-    stack_pop(&proc.stk, &x);
+    //stack_pop(&proc.stk, &x);
     //printf("%.2lf", (double) x / 100);
     CPU_Dtor(pfile, &proc);
     stack_dtor(&proc.stk);
@@ -141,6 +141,7 @@ int Stack_Ctor(stack * stk) {
     stk->capacity = start_capacity;
     stk->size = 0;
     stk->data = (elem_t *)calloc(sizeof(elem_t) * start_capacity + 2 * sizeof(canary_t), 1);
+    stk->data = (elem_t*)&(((canary_t*)stk->data)[1]);
     can(*stk, 'l');
     *(canary_t *)(stk->data + (stk->capacity)) = 0xDEADBEEF;
     stk->hash_data = calc_data(*stk);
@@ -213,8 +214,7 @@ int stack_compression(stack * stk) {
 
 int put_canary(stack * stk, char type) {
     if (type == 'l') {
-        ((canary_t*)stk->data)[0] = 0xDEADBEEF;
-        stk->data = (elem_t*)&(((canary_t*)stk->data)[1]);
+        ((canary_t*)stk->data)[-1] = 0xDEADBEEF;
     }
 
     if (type == 'r') {

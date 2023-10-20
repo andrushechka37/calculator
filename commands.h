@@ -1,4 +1,4 @@
-DEF_CMD(push,  1, true,  {stack_push(&proc->stk, command_understand(full_command, proc, pfile) * multiple);                   dump_stk(&proc->stk, " ", 1, " ");})
+DEF_CMD(push,  1, true,  {stack_push(&proc->stk, command_understand(full_command, proc, pfile) * multiple);})
 DEF_CMD(sub,   2, false, {stack_pop(&proc->stk, &sec_arg);
                           stack_pop(&proc->stk, &first_arg);
                           stack_push(&proc->stk, (first_arg-sec_arg));})
@@ -25,8 +25,16 @@ DEF_CMD(in,    9, false, {printf("type the number:\n");
 DEF_CMD(out,  10, false, {stack_pop(&proc->stk, &argument);
                           printf("%.2lf\n", (double) argument / multiple);})
 DEF_CMD(pop,  11, true,  {stack_pop(&proc->stk, command_understand_pop(full_command, proc, pfile));})
-DEF_CMD(jump, 12, true, {proc->ip = proc->code_array[proc->ip] - 1;})
+DEF_CMD(jmp, 12, true, {proc->ip = proc->code_array[proc->ip];})
 DEF_CMD(hlt,  -1, false, {return;})
+DEF_CMD(jbe, 13, true, {stack_pop(&proc->stk, &argument);
+                        stack_pop(&proc->stk, &first_arg);
+                        if (argument >= first_arg) {
+                            proc->ip = proc->code_array[proc->ip];
+                        } else {
+                            proc->ip++;
+                        }})
+
 
 
 
