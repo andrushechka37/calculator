@@ -77,3 +77,5 @@ DEF_CMD(jbe, 13, true, {
         proc->ip++;
     }
 })
+
+#undef DEF_CMD

@@ -6,6 +6,11 @@
 #include <math.h>
 #include "processor.h"
 
+// TODO: WHY ARE YOU COMMITING BINARIES?
+// TODO: ARE COMMIT MESSAGES A JOKE FOR YOU?
+
+// dont comment text of programm
+// think about commit names
 // clean trash
 // header files
 // naming fix
@@ -30,8 +35,6 @@ void CPU(FILE * pfile, processor * proc) {
             case Cmd_ ## name: {code} break;                                     \
 
             #include "commands.h"
-            // TODO: By the way, you can include #undef in your commands.h file
-            #undef DEF_CMD
             default:
                 printf("unknown commad rewrite %d - operation, %d - argument", operation, argument);
                 return;
@@ -43,7 +46,7 @@ void CPU_Ctor(FILE ** pfile) {
     if(bin_input == 0) {
         *pfile = fopen("asm.txt", "r");
     } else if (bin_input == 1) {
-        *pfile = fopen("asm_bin.txt", "rb");
+        *pfile = fopen("asm_bin.bin", "rb");
     }
 }
 
