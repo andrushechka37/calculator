@@ -3,7 +3,8 @@
 enum bin {
     command_bits = 31,
     const_bit    =  5,
-    reg_bit      =  6
+    reg_bit      =  6,
+    ram_bit      =  7
 };
 
 
@@ -27,7 +28,7 @@ struct processor {
     int * code_array;
     int ip;
     int labels[10];
-    char RAM[str_len];
+    int RAM[str_len];
 };
 
 int get_size_of_file(FILE * file);

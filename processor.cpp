@@ -71,11 +71,11 @@ int * command_understand_pop(int command, processor * proc, FILE * pfile, int ca
     }
     if((command & (1 << reg_bit)) != 0) {
         int reg_num = (proc->code_array[proc->ip++]);
-        if (caller == push) {
-            proc->registers[reg_num] /= multiple;
-        }
-
         return &(proc->registers[reg_num]);
+    }
+    if ((command & (1 << ram_bit)) != 0) {
+        int ram_num = (proc->code_array[proc->ip++]);
+        return &(proc->RAM[ram_num]);
     }
     return 0;
 } 
@@ -87,6 +87,10 @@ int command_understand_push(int command, processor * proc, FILE * pfile) {
     if ((command & (1 << const_bit)) != 0) {
         int argument = (proc->code_array[proc->ip++]);
         return argument;
+    }
+    if ((command & (1 << ram_bit)) != 0) {
+        int ram_num = (proc->code_array[proc->ip++]);
+        return (proc->RAM[ram_num] / multiple);
     }
     return poison_value;
 }
@@ -171,7 +175,7 @@ int stack_pop(stack * stk, elem_t * value) {
         return -1;
     }
 
-    *value = stk->data[--stk->size];
+    *value = (stk->data[--stk->size]);
     stk->data[stk->size] = -999;
     // stk->hash_data = calc_data(*stk);
     // stk->hash_stack = calc_stack(*stk);

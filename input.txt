@@ -20,5 +20,12 @@ add
 pop rax
 jmp :3
 
+
 :4
+push 5
+pop [ 0 ]
+push [ 0 ]
+out
+
+
 hlt

@@ -83,7 +83,11 @@ void put_argument(processor * proc, FILE * input, FILE * pasm, int num, int have
                 proc->code_array[proc->ip++] = -999;                          
                 fprintf(pasm, " -999\n");                                     
             }                                                                 
-        }                                                                     
+        } else if (fscanf(input, " [ %d ]", &arg) == 1) {
+            fprintf(pasm, "%d %d\n", ((1 << ram_bit) | num), arg);
+            proc->code_array[proc->ip++] = (1 << ram_bit) | num;
+            proc->code_array[proc->ip++] = arg;
+        }                                                                
         } else {                                                              
         fprintf(pasm, "%d\n", num);                                           
         proc->code_array[proc->ip++] = num;                                   
