@@ -8,43 +8,9 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-// TODO: you can make it smaller, and ... just delete this and write it better
-// func arg обработка //bad rewrite
 #define DEF_CMD(name, num, have_arg, ...)                                     \
 if (strcmp(str, #name) == 0) {                                                \
-    int arg = 0;                                                              \
-    char n_reg = 0;                                                           \
-    char x_check = 0;                                                         \
-    if (have_arg == 1) {                                                      \
-        if (fscanf(input, "%d", &arg) == 1) {                                 \
-            fprintf(pasm, "%d %d\n", ((1 << const_bit) | num), arg);          \
-            proc->code_array[proc->ip++] = (1 << const_bit) | num;            \
-            proc->code_array[proc->ip++] = arg;                               \
-        } else if (fscanf(input, " r%c%c", &n_reg, &x_check) == 2) {          \
-            fprintf(pasm, "%d ", ((1 << reg_bit) | num));                     \
-            proc->code_array[proc->ip++] = (1 << reg_bit) | num;              \
-            fscanf(input, " r%c%c", &n_reg, &x_check);                        \
-            if (x_check == 'x') {                                             \
-                fprintf(pasm, "%d \n", n_reg - 'a' + 1);                      \
-                proc->code_array[proc->ip++] = n_reg - 'a' + 1;               \
-            } else {                                                          \
-                printf("error");                                              \
-            }                                                                 \
-        } else if (fscanf(input, " :%c", (char *)&n_reg) == 1) {                      \
-            proc->code_array[proc->ip++] = num;                               \
-            fprintf(pasm, "%d", num);                                       \
-            if (proc->labels[n_reg - '0'] != 0) {                                   \
-                proc->code_array[proc->ip++] = proc->labels[n_reg - '0'];           \
-                fprintf(pasm, " %d\n", proc->labels[n_reg - '0']);                  \
-            } else {                                                          \
-                proc->code_array[proc->ip++] = -999;                          \
-                fprintf(pasm, " -999\n");                                     \
-            }                                                                 \
-        }                                                                     \
-        } else {                                                              \
-        fprintf(pasm, "%d\n", num);                                           \
-        proc->code_array[proc->ip++] = num;                                   \
-    }                                                                         \
+    put_argument(proc, input, pasm, num, have_arg);                           \
 } else                                                                        \
 
 
@@ -85,7 +51,41 @@ int main(void) {
     // }
 }
 
-
+void put_argument(processor * proc, FILE * input, FILE * pasm, int num, int have_arg) {
+    int arg = 0;                                                              
+    char n_reg = 0;                                                           
+    char x_check = 0;  
+    if (have_arg == 1) {                                                      
+        if (fscanf(input, "%d", &arg) == 1) {                                 
+            fprintf(pasm, "%d %d\n", ((1 << const_bit) | num), arg);         
+            proc->code_array[proc->ip++] = (1 << const_bit) | num;            
+            proc->code_array[proc->ip++] = arg;                               
+        } else if (fscanf(input, " r%c%c", &n_reg, &x_check) == 2) {          
+            fprintf(pasm, "%d ", ((1 << reg_bit) | num));                     
+            proc->code_array[proc->ip++] = (1 << reg_bit) | num;              
+            fscanf(input, " r%c%c", &n_reg, &x_check);                        
+            if (x_check == 'x') {                                             
+                fprintf(pasm, "%d \n", n_reg - 'a' + 1);                      
+                proc->code_array[proc->ip++] = n_reg - 'a' + 1;               
+            } else {                                                          
+                printf("error");                                              
+            }                                                                 
+        } else if (fscanf(input, " :%c", (char *)&n_reg) == 1) {                      
+            proc->code_array[proc->ip++] = num;                              
+            fprintf(pasm, "%d", num);                                      
+            if (proc->labels[n_reg - '0'] != 0) {                                   
+                proc->code_array[proc->ip++] = proc->labels[n_reg - '0'];          
+                fprintf(pasm, " %d\n", proc->labels[n_reg - '0']);                  
+            } else {                                                          
+                proc->code_array[proc->ip++] = -999;                          
+                fprintf(pasm, " -999\n");                                     
+            }                                                                 
+        }                                                                     
+        } else {                                                              
+        fprintf(pasm, "%d\n", num);                                           
+        proc->code_array[proc->ip++] = num;                                   
+    }     
+}
 
 // TODO: why don't you just include textlib.h-like thing from Onegin as a separate header?
 int get_size_of_file(FILE * file) {
