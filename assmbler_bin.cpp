@@ -8,6 +8,9 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
+// TODO: you can make it smaller, and ... just delete this and write it better
+// func arg обработка //bad rewrite
+
 #define DEF_CMD(name, num, have_arg, ...)                                     \
 if (strcmp(str, #name) == 0) {                                                \
     put_argument(proc, input, pasm, num, have_arg);                           \
