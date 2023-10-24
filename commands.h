@@ -1,6 +1,6 @@
 DEF_CMD(push, 1, true, {
-  stack_push(&proc->stk,
-             command_understand(command, proc, pfile) * multiple);
+    stack_push(&proc->stk,
+             (command_understand_push(command, proc, pfile)) * multiple);
 })
 
 DEF_CMD(sub, 2, false, {
@@ -57,7 +57,7 @@ DEF_CMD(out, 10, false, {
 
 DEF_CMD(pop, 11, true,  {
     stack_pop(&proc->stk, 
-                command_understand_pop(command, proc, pfile));
+                command_understand_pop(command, proc, pfile, pop));
 })
 
 DEF_CMD(jmp, 12, true, {

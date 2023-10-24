@@ -60,7 +60,7 @@ void assembler(processor * proc) {
     /*else*/ if(str[0] == ':') {
             proc->labels[str[1] - '0'] = proc->ip;      
         } else {
-            printf("Syntax error");
+            printf("Syntax error %s - error cause", str);
         } 
     }
     fclose(pasm);

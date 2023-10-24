@@ -5,17 +5,13 @@
 #include <stdlib.h>
 #include <math.h>
 #include "processor.h"
-
+//////////// valueble pushed to stack is multilpied 100
 // TODO: WHY ARE YOU COMMITING BINARIES?
 // TODO: ARE COMMIT MESSAGES A JOKE FOR YOU?
-
 // dont comment text of programm
-// think about commit names
-// clean trash
-// header files
-// naming fix
-//////////// valueble pushed to stack is multilpied 100
-//norm funs that decides what to do
+
+
+//norm funs that decides what to do   NOOOOOOOOOOOOOOOOOOOOOOOOOOOO
 // input and asm change names
 
 void CPU(FILE * pfile, processor * proc) {
@@ -59,8 +55,6 @@ int main(void) {
     Stack_Ctor(&proc.stk);
     FILE * pfile = 0;
     CPU_Ctor(&pfile);
-
-    dump_stk(&proc.stk, " ", 1, " ");
     code_array_gen(&proc, pfile);
     dump_stk(&proc.stk, " ", 1, " ");
     CPU(pfile, &proc);
@@ -70,7 +64,22 @@ int main(void) {
     stack_dtor(&proc.stk);
 }
 ////////////////////////-----------------------------------------------------------------------------------------------------
-int command_understand(int command, processor * proc, FILE * pfile) {
+int * command_understand_pop(int command, processor * proc, FILE * pfile, int caller) {
+    if ((command & (1 << const_bit)) != 0) {
+        proc->registers[0] = (proc->code_array[proc->ip++]);
+        return &proc->registers[0];
+    }
+    if((command & (1 << reg_bit)) != 0) {
+        int reg_num = (proc->code_array[proc->ip++]);
+        if (caller == push) {
+            proc->registers[reg_num] /= multiple;
+        }
+
+        return &(proc->registers[reg_num]);
+    }
+    return 0;
+} 
+int command_understand_push(int command, processor * proc, FILE * pfile) {
     if((command & (1 << reg_bit)) != 0) {
         int reg_num = (proc->code_array[proc->ip++]);
         return (proc->registers[reg_num] / multiple);
@@ -82,18 +91,12 @@ int command_understand(int command, processor * proc, FILE * pfile) {
     return poison_value;
 }
 
-int * command_understand_pop(int command, processor * proc, FILE * pfile) {
-    if((command & (1 << reg_bit)) != 0) {
-        int reg_number = (proc->code_array[proc->ip++]);
-        return &proc->registers[reg_number];
-    }
-    return 0;
-}
+
 void code_array_gen(processor * proc, FILE * pfile) {
     proc->code_array = (int *) calloc(get_size_of_file(pfile) * sizeof(int), 1);
     if (bin_input == 0) {
     proc->ip = 0;
-    char str[100] = {0}; /////////////const
+    char str[str_len] = {0};
     int arg = 0;
     while(fscanf(pfile, "%s", str) != EOF) {
         arg = str_to_int(str);
