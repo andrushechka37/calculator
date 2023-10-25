@@ -20,7 +20,7 @@ void CPU(FILE * pfile, processor * proc) {
         int operation = command & command_bits;
 
         if (command == -1) {
-            continue;
+            break;
         }
         int argument = 0;
         int reg_number = 0;
@@ -38,7 +38,9 @@ void CPU(FILE * pfile, processor * proc) {
     }
 }
 
-void CPU_Ctor(FILE ** pfile) {
+void CPU_Ctor(FILE ** pfile, processor * proc) {
+    Stack_Ctor(&proc->stk);
+    Stack_Ctor(&proc->execution_context);
     if(bin_input == 0) {
         *pfile = fopen("asm.txt", "r");
     } else if (bin_input == 1) {
@@ -49,19 +51,20 @@ void CPU_Ctor(FILE ** pfile) {
 void CPU_Dtor(FILE * pfile, processor * proc) {
     fclose(pfile);
     free(proc->code_array);
+    stack_dtor(&proc->stk);
+    stack_dtor(&proc->execution_context);
 }
 int main(void) {
     processor proc = {};
-    Stack_Ctor(&proc.stk);
     FILE * pfile = 0;
-    CPU_Ctor(&pfile);
+    CPU_Ctor(&pfile, &proc);
     code_array_gen(&proc, pfile);
     dump_stk(&proc.stk, " ", 1, " ");
     CPU(pfile, &proc);
     dump_stk(&proc.stk, " ", 1, " ");
     int x = 0;
     CPU_Dtor(pfile, &proc);
-    stack_dtor(&proc.stk);
+    
 }
 ////////////////////////-----------------------------------------------------------------------------------------------------
 int * command_understand_pop(int command, processor * proc, FILE * pfile, int caller) {

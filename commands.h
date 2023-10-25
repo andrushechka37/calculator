@@ -78,4 +78,13 @@ DEF_CMD(jbe, 13, true, {
     }
 })
 
+
+DEF_CMD(call, 14, true, 
+    stack_push(&proc->execution_context, proc->ip + 1);
+    proc->ip = proc->code_array[proc->ip];
+)
+DEF_CMD(ret, 15, false, 
+    stack_pop(&proc->execution_context, &(proc->ip));
+)
+
 #undef DEF_CMD

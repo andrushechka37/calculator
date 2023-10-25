@@ -29,6 +29,7 @@ struct processor {
     int ip;
     int labels[10];
     int RAM[str_len];
+    stack execution_context;
 };
 
 int get_size_of_file(FILE * file);

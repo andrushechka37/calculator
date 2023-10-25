@@ -27,5 +27,18 @@ pop [ 0 ]
 push [ 0 ]
 out
 
+call :6
 
 hlt
+
+:6
+call :9
+push 777
+out
+ret
+
+
+:9
+push 868
+out
+ret
