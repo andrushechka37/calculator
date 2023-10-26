@@ -38,7 +38,7 @@ int str_to_int(char str[]);
 
 void code_array_gen(processor * proc, FILE * pfile);
 
-int command_understand_push(int command, processor * proc, FILE * pfile);
-int * command_understand_pop(int command, processor * proc, FILE * pfile, int caller);
+int put_arg(int command, processor * proc, FILE * pfile);
+int * get_arg(int command, processor * proc, FILE * pfile, int caller);
 
 void put_argument(processor * proc, FILE * input, FILE * pasm, int num, int have_arg);

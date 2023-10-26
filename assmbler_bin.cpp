@@ -19,8 +19,8 @@ if (strcmp(str, #name) == 0) {                                                \
 
 
 void assembler(processor * proc) {
-    FILE * input = fopen("input.txt", "r");
-    FILE * pasm = fopen("asm.txt", "wt");/////////// costul // TODO: Agreed
+    FILE * input = fopen("asm.txt", "r");
+    FILE * pasm = fopen("input.txt", "wt");/////////// costul // TODO: Agreed
     proc->code_array = (int *) calloc(get_size_of_file(input) * 4, 1);
     char str[100] = {0};
     while (fscanf(input, "%s", str) != EOF) {
@@ -46,7 +46,7 @@ int main(void) {
         printf("%d", proc.labels[i]);
     }
 
-    FILE * pasm_bin = fopen("asm_bin.bin", "wb");
+    FILE * pasm_bin = fopen("input_bin.bin", "wb");
     fwrite(proc.code_array, sizeof(int), proc.ip - 1, pasm_bin);
     // while(proc.code_array[i] != 0) {
     //     printf("%d\n", proc.code_array[i]);

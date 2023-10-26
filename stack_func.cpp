@@ -10,11 +10,11 @@ int Stack_Ctor(stack * stk) {
     stk->capacity = start_capacity;
     stk->size = 0;
     stk->data = (elem_t *)calloc(sizeof(elem_t) * start_capacity + 2 * sizeof(canary_t), 1);
+    stk->data = (elem_t*)&(((canary_t*)stk->data)[1]);
     can(*stk, 'l');
     *(canary_t *)(stk->data + (stk->capacity)) = 0xDEADBEEF;
     stk->hash_data = calc_data(*stk);
     stk->hash_stack = calc_stack(*stk);
-    stk->data = (elem_t*)&(((canary_t*)stk->data)[-1]);
     return 0;
 }
 
@@ -27,7 +27,7 @@ int stack_push(stack * stk, elem_t value) {
     stk->data[stk->size++] = value;
     // stk->hash_data = calc_data(*stk);
     // stk->hash_stack = calc_stack(*stk);
-    //verify(*stk);
+    // verify(*stk);
     return 0;
 }
 
@@ -40,7 +40,7 @@ int stack_pop(stack * stk, elem_t * value) {
         return -1;
     }
 
-    *value = stk->data[--stk->size];
+    *value = (stk->data[--stk->size]);
     stk->data[stk->size] = -999;
     // stk->hash_data = calc_data(*stk);
     // stk->hash_stack = calc_stack(*stk);
@@ -83,8 +83,7 @@ int stack_compression(stack * stk) {
 
 int put_canary(stack * stk, char type) {
     if (type == 'l') {
-        ((canary_t*)stk->data)[0] = 0xDEADBEEF;
-        stk->data = (elem_t*)&(((canary_t*)stk->data)[1]);
+        ((canary_t*)stk->data)[-1] = 0xDEADBEEF;
     }
 
     if (type == 'r') {
@@ -218,3 +217,5 @@ int stack_dtor(stack * stk) {
     free((elem_t *)&(((canary_t*)stk->data)[-1]));
     return 0;
 }
+
+
