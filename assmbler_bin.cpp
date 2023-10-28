@@ -1,12 +1,11 @@
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-#include "processor.h"
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include "processor.h"
 
 // TODO: you can make it smaller, and ... just delete this and write it better
 // func arg обработка //bad rewrite

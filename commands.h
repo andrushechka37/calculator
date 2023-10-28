@@ -87,4 +87,46 @@ DEF_CMD(ret, 15, false,
     stack_pop(&proc->execution_context, &(proc->ip));
 )
 
+DEF_CMD(je, 16, true, {
+    stack_pop(&proc->stk, &argument);
+    stack_pop(&proc->stk, &first_arg);
+    if (argument == first_arg) {
+        proc->ip = proc->code_array[proc->ip];
+    } else {
+        proc->ip++;
+    }
+})
+
+
+DEF_CMD(ja, 17, true, {
+    stack_pop(&proc->stk, &argument);
+    stack_pop(&proc->stk, &first_arg);
+    if (argument < first_arg) {
+        proc->ip = proc->code_array[proc->ip];
+    } else {
+        proc->ip++;
+    }
+})
+
+DEF_CMD(jb, 18, true, {
+    stack_pop(&proc->stk, &argument);
+    stack_pop(&proc->stk, &first_arg);
+    if (argument > first_arg) {
+        proc->ip = proc->code_array[proc->ip];
+    } else {
+        proc->ip++;
+    }
+})
+DEF_CMD(jne, 19, true, {
+    stack_pop(&proc->stk, &argument);
+    stack_pop(&proc->stk, &first_arg);
+    if (argument != first_arg) {
+        proc->ip = proc->code_array[proc->ip];
+    } else {
+        proc->ip++;
+    }
+})
+
+
+
 #undef DEF_CMD
