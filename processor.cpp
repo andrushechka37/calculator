@@ -14,6 +14,7 @@
 // norm funs that decides what to do   NOOOOOOOOOOOOOOOOOOOOOOOOOOOO
 
 
+// TODO: naming, without a verb is ambiguous 
 void CPU(FILE * pfile, processor * proc) {
     while ((proc->code_array[proc->ip]) != 0) {
         int command = (proc->code_array[proc->ip++]);
@@ -56,7 +57,7 @@ void CPU_Dtor(FILE * pfile, processor * proc) {
 }
 int main(void) {
     processor proc = {};
-    FILE * pfile = 0;
+    FILE * pfile = 0; // TODO: NULL?
     CPU_Ctor(&pfile, &proc);
     code_array_gen(&proc, pfile);
     dump_stk(&proc.stk, " ", 1, " ");
@@ -69,7 +70,7 @@ int main(void) {
 ////////////////////////-----------------------------------------------------------------------------------------------------
 int * get_arg(int command, processor * proc, FILE * pfile, int caller) {
     if ((command & (1 << const_bit)) != 0) {
-        proc->registers[0] = (proc->code_array[proc->ip++]);
+        proc->registers[0] = (proc->code_array[proc->ip++]); // TODO: what is this?
         return &proc->registers[0];
     }
     if((command & (1 << reg_bit)) != 0) {
@@ -85,7 +86,7 @@ int * get_arg(int command, processor * proc, FILE * pfile, int caller) {
 int put_arg(int command, processor * proc, FILE * pfile) {
     if((command & (1 << reg_bit)) != 0) {
         int reg_num = (proc->code_array[proc->ip++]);
-        return (proc->registers[reg_num] / multiple);
+        return (proc->registers[reg_num] / multiple); // TODO: extract in a function
     }
     if ((command & (1 << const_bit)) != 0) {
         int argument = (proc->code_array[proc->ip++]);
@@ -93,15 +94,17 @@ int put_arg(int command, processor * proc, FILE * pfile) {
     }
     if ((command & (1 << ram_bit)) != 0) {
         int ram_num = (proc->code_array[proc->ip++]);
-        return (proc->RAM[ram_num] / multiple);
+        return (proc->RAM[ram_num] / multiple); // TODO: You lose information here from integral division 
     }
     return poison_value;
 }
 
 
+// TODO: naming, maybe parse_code_
 void code_array_gen(processor * proc, FILE * pfile) {
     proc->code_array = (int *) calloc(get_size_of_file(pfile) * sizeof(int), 1);
     if (bin_input == 0) {
+    // TODO: maybe a little indentation?
     proc->ip = 0;
     char str[str_len] = {0};
     int arg = 0;
