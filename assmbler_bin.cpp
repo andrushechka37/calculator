@@ -7,9 +7,13 @@
 #include <unistd.h>
 #include "processor.h"
 
+// TODO: why don't you have assembler header?
+
+
 // TODO: you can make it smaller, and ... just delete this and write it better
 // func arg обработка //bad rewrite
 
+// TODO: you can place it where you use it
 #define DEF_CMD(name, num, have_arg, ...)                                     \
 if (strcmp(str, #name) == 0) {                                                \
     put_argument(proc, input, pasm, num, have_arg);                           \
@@ -17,11 +21,17 @@ if (strcmp(str, #name) == 0) {                                                \
 
 
 
+// TODO: assemble_single_pass? <assemble>?
 void assembler(processor * proc) {
     FILE * input = fopen("asm.txt", "r");
     FILE * pasm = fopen("input.txt", "wt");/////////// costul // TODO: Agreed
+
     proc->code_array = (int *) calloc(get_size_of_file(input) * 4, 1);
+    // TODO:                                                               ^
+
     char str[100] = {0};
+    //       ^~~ TODO: what is this?
+
     while (fscanf(input, "%s", str) != EOF) {
         char * label_check = strchr(str, ':');
         #include "commands.h"
@@ -36,15 +46,19 @@ void assembler(processor * proc) {
 
 }
 int main(void) {
-    processor proc = {};
-    assembler(&proc);
-    proc.ip = 0;
-    assembler(&proc);
+    // TODO: at least make this a function...
+    processor proc = {};     // -----+
+    assembler(&proc);   //      | This whole thing should be a function
+    proc.ip = 0;             //      |
+    assembler(&proc);   // -----+
+
+    // TODO: where is proc destructor?
 
     for(int i = 0; i < 10; i++) {
         printf("%d", proc.labels[i]);
     }
 
+    // TODO: a function?
     FILE * pasm_bin = fopen("input_bin.bin", "wb");
     fwrite(proc.code_array, sizeof(int), proc.ip - 1, pasm_bin);
     // while(proc.code_array[i] != 0) {
